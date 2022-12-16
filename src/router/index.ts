@@ -12,10 +12,16 @@ const router = createRouter({
       component: SignIn,
     },
     {
+      path: '/attendant',
+      name: 'attendant',
+      component: () => import('../views/Attendant.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFound,
-    }
+    },
+    
   ],
 });
 
