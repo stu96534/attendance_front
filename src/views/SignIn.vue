@@ -6,8 +6,8 @@ const password = ref("");
 
 const handleSubmit = () => {
   const data = JSON.stringify({
-    email: this.email,
-    password: this.password
+    email: email.value,
+    password: password.value
   })
 
   console.log('data', data)
