@@ -1,20 +1,16 @@
-import axios from 'axios'
-import Swal from 'sweetalert2'
+import axios from "axios";
+import Swal from "sweetalert2";
 
-const baseURL = ' https://stormy-sierra-07744.herokuapp.com/api'
+const baseURL = " http://localhost:3000/api";
 
 export const apiHelper = axios.create({
-  baseURL
-})
+  baseURL,
+});
 
 export const Toast = Swal.mixin({
   toast: true,
-  position: 'top-end',
+  position: "top-right",
   showConfirmButton: false,
-  timer:3000
-})
+  timer: 3000,
+});
 
-export const Success = Swal.fire({
-  icon: 'success',
-  text: '打卡成功'
-})

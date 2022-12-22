@@ -1,17 +1,51 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import authorizationAPI from "./../apis/authorization";
+import { Toast } from "./../utils/helpers";
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 
-const handleSubmit = () => {
-  const data = JSON.stringify({
-    email: email.value,
-    password: password.value
-  })
+const handleSubmit = async () => {
+  try {
 
-  console.log('data', data)
-}
+    if (!email.value || !password.value) {
+      Toast.fire({
+        icon: 'warning',
+        title: '欄位不得有空格',
+      });
+      return
+    }
+
+
+    const { data } = await authorizationAPI
+      .signIn({
+        email: email.value,
+        password: password.value,
+      })
+    
+    if (data.status === "error") {
+
+      throw new Error(data.message);
+    }
+
+    localStorage.setItem("token", data.token);
+
+    router.push("/attendant");
+
+  } catch (error) {
+    const errMsg = error.response.data
+    
+    Toast.fire({
+      icon: 'error',
+      title: errMsg.message,
+    })
+    console.log(errMsg.message);
+  }
+
+};
 </script>
 
 <template>
@@ -22,40 +56,19 @@ const handleSubmit = () => {
           <h1 class="h3 mb-3 mt-4 font-weight-normal fs-1">Login</h1>
         </div>
 
-        <div
-          class="form-label-group mb-3 ms-5 mt-5 d-flex align-items-center fs-5"
-        >
+        <div class="form-label-group mb-3 ms-5 mt-5 d-flex align-items-center fs-5">
           <label for="email" class="me-5">Email </label>
           <div class="input">
-            <input
-              id="email"
-              v-model="email"
-              name="email"
-              type="email"
-              class="form-control"
-              placeholder="email"
-              autocomplete="username"
-              required
-              autofocus
-            />
+            <input id="email" v-model="email" name="email" type="email" class="form-control" placeholder="email"
+              autocomplete="username" required autofocus />
           </div>
         </div>
 
-        <div
-          class="form-label-group mb-5 mt-4 ms-2 d-flex align-items-center fs-5"
-        >
+        <div class="form-label-group mb-5 mt-4 ms-2 d-flex align-items-center fs-5">
           <label for="password" class="me-5">Password</label>
           <div class="input">
-            <input
-              id="password"
-              v-model="password"
-              name="password"
-              type="password"
-              class="form-control"
-              placeholder="Password"
-              autocomplete="current-password"
-              required
-            />
+            <input id="password" v-model="password" name="password" type="password" class="form-control"
+              placeholder="Password" autocomplete="current-password" required/>
           </div>
         </div>
 

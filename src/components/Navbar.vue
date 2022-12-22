@@ -1,5 +1,9 @@
 <script setup>
 import { ref, reactive } from "vue";
+import { useRouter } from "vue-router"
+
+const router = useRouter()
+
 const dummyUser = {
   currentUser: {
     id: 1,
@@ -27,6 +31,12 @@ data.currentUser = {
   ...dummyUser.currentUser,
 };
 data.isAuthenticated = dummyUser.isAuthenticated;
+
+const logout = () => {
+  localStorage.removeItem('token')
+
+  router.push('/signin')
+}
 </script>
 
 <template>
@@ -46,7 +56,7 @@ data.isAuthenticated = dummyUser.isAuthenticated;
 
           <template v-if="data.isAuthenticated">
             <RouterLink to="/" class="nav-link fs-5 me-4" aria-current="page">Profile</RouterLink>
-            <button type="button" class="btn btn-sm btn-outline-success my-2 my-sm-0 fs-5 me-4">
+            <button type="button" class="btn btn-sm btn-outline-success my-2 my-sm-0 fs-5 me-4" @click= "logout">
               登出
             </button>
           </template>
