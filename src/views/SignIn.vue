@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import authorizationAPI from "./../apis/authorization";
@@ -7,6 +7,7 @@ import { Toast } from "./../utils/helpers";
 const router = useRouter();
 const email = ref("");
 const password = ref("");
+let isProcessing = ref(false);
 
 const handleSubmit = async () => {
   try {
@@ -14,10 +15,12 @@ const handleSubmit = async () => {
     if (!email.value || !password.value) {
       Toast.fire({
         icon: 'warning',
-        title: '欄位不得有空格',
+        title: '請填寫這個欄位。',
       });
       return
     }
+
+    isProcessing.value =true
 
 
     const { data } = await authorizationAPI
@@ -35,14 +38,19 @@ const handleSubmit = async () => {
 
     router.push("/attendant");
 
-  } catch (error) {
-    const errMsg = error.response.data
-    
-    Toast.fire({
-      icon: 'error',
-      title: errMsg.message,
-    })
-    console.log(errMsg.message);
+  } catch (err: any) {
+
+    const errMsg = err.response.data;
+
+      Toast.fire({
+        icon: 'error',
+        title: errMsg.message,
+      })
+
+    isProcessing.value = false
+
+      console.log(errMsg.message);
+  
   }
 
 };
@@ -73,7 +81,7 @@ const handleSubmit = async () => {
         </div>
 
         <div class="d-grid justify-content-center align-self-center mt-5">
-          <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
+          <button class="btn btn-lg btn-primary btn-block mb-3" type="submit" :disabled="isProcessing">
             Submit
           </button>
         </div>
