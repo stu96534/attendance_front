@@ -1,43 +1,23 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router"
-import { mapState } from "vuex"
+import { useStore } from "vuex"
 
 const router = useRouter()
+const store = useStore()
 
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-};
+const currentUser = computed(() => store.getters.currentUser );
 
-const data = reactive({
-  currentUser: {
-    id: -1,
-    name: "",
-    email: "",
-    image: "",
-    isAdmin: false,
-  },
-  isAuthenticated: false,
-});
+const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
-data.currentUser = {
-  ...data.currentUser,
-  ...dummyUser.currentUser,
-};
-data.isAuthenticated = dummyUser.isAuthenticated;
+
 
 const logout = () => {
   localStorage.removeItem('token')
 
   router.push('/signin')
 }
+
 </script>
 
 <template>
@@ -52,10 +32,10 @@ const logout = () => {
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto mb-2 mb-md-0">
-          <RouterLink to="/" class="nav-link fs-5 me-4" aria-current="page" v-if="data.currentUser.isAdmin">Admin
+          <RouterLink to="/" class="nav-link fs-5 me-4" aria-current="page" v-if="currentUser.isAdmin">Admin
           </RouterLink>
 
-          <template v-if="data.isAuthenticated">
+          <template v-if="isAuthenticated">
             <RouterLink to="/" class="nav-link fs-5 me-4" aria-current="page">Profile</RouterLink>
             <button type="button" class="btn btn-sm btn-outline-success my-2 my-sm-0 fs-5 me-4" @click= "logout">
               登出

@@ -18,7 +18,10 @@ const store = createStore({
       state.isAuthenticated = true
     }
   },
-  actions: {},
+  getters: {
+    currentUser: (state) => state.currentUser,
+    isAuthenticated: (state) => state.isAuthenticated
+  },
 });
 
 export default store;

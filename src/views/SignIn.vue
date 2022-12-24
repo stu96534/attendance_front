@@ -3,11 +3,12 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import authorizationAPI from "./../apis/authorization";
 import { Toast } from "./../utils/helpers";
-import  store  from "./../store/index"
+import { useStore } from "vuex"
 
 const router = useRouter();
 const email = ref("");
 const password = ref("");
+const store = useStore();
 let isProcessing = ref(false);
 
 const handleSubmit = async () => {
@@ -34,6 +35,7 @@ const handleSubmit = async () => {
 
       throw new Error(data.message);
     }
+    
 
     localStorage.setItem("token", data.token);
 
