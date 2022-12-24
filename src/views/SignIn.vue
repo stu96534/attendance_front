@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import authorizationAPI from "./../apis/authorization";
 import { Toast } from "./../utils/helpers";
+import  store  from "./../store/index"
 
 const router = useRouter();
 const email = ref("");
@@ -35,6 +36,8 @@ const handleSubmit = async () => {
     }
 
     localStorage.setItem("token", data.token);
+
+    store.commit('setCurrentUser', data.user)
 
     router.push("/attendant");
 
