@@ -2,6 +2,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import NotFound from "../views/NotFound.vue";
 import SignIn from "../views/SignIn.vue"
+import store from "../store/index"
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,7 +25,7 @@ const router = createRouter({
       component: () => import('../views/Attendant.vue'),
     },
     {
-      path: '/users/:id',
+      path: '/users',
       name: 'user',
       component: () => import('../views/User.vue'),
     },
@@ -31,8 +34,13 @@ const router = createRouter({
       name: 'not-found',
       component: NotFound,
     },
-    
+
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  store.dispatch('fetchCurrentUser')
+  next()
+})
 
 export default router;

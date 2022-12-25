@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import usersAPI from "../apis/users"
 
 const store = createStore({
   state: {
@@ -16,6 +17,21 @@ const store = createStore({
         ...currentUser
       },
       state.isAuthenticated = true
+    }
+  },
+  actions: {
+    async fetchCurrentUser ({ commit }) {
+      try {
+        const { data } = await usersAPI.getUser()
+        const { email } = data
+
+        commit('setCurrentUser', {
+          email
+        })
+      } catch (error) {
+        console.log('error', error)
+        console.error('can not fetch user information')
+      }
     }
   },
   getters: {
