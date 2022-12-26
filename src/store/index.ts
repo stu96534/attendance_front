@@ -3,11 +3,7 @@ import usersAPI from "../apis/users"
 
 const store = createStore({
   state: {
-    currentUser: {
-      id: -1,
-      name: '',
-      email: '',
-    },
+    currentUser: { },
     isAuthenticated: false
   },
   mutations: {
@@ -17,20 +13,31 @@ const store = createStore({
         ...currentUser
       },
       state.isAuthenticated = true
+    },
+    revokeAuthentication (state) {
+      state.currentUser = {}
+      state.isAuthenticated = false
+      localStorage.removeItem('token')
     }
   },
   actions: {
     async fetchCurrentUser ({ commit }) {
       try {
-        const { data } = await usersAPI.getUser()
-        const { email } = data
+        const { data } = await usersAPI.getCurrentUser()
+        const { id, name, email, image, isAdmin } = data
 
         commit('setCurrentUser', {
-          email
+          id,
+          name,
+          email,
+          image,
+          isAdmin
         })
+        return true
       } catch (error) {
         console.log('error', error)
         console.error('can not fetch user information')
+        return false
       }
     }
   },

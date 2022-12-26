@@ -38,8 +38,30 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  store.dispatch('fetchCurrentUser')
+router.beforeEach(async (to, from, next) => {
+  //從localStorage 取出 token
+  const token = localStorage.getItem('token')
+
+  //預設尚未驗證
+  let isAuthenticated = false
+
+  //有token才驗證
+  if (token) {
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+  }
+
+   //token無效且進入需要驗證的頁面，則轉址到登入首頁
+  if(!isAuthenticated && to.name !== 'sign-in') {
+    next('/signin')
+    return
+  }
+
+  //token有效且進入不需要驗證的頁面，則轉址到打卡首頁
+  if (isAuthenticated && to.name === 'sign-in') {
+    next('/attendant')
+    return
+  }
+  
   next()
 })
 

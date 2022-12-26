@@ -13,7 +13,7 @@ const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
 
 const logout = () => {
-  localStorage.removeItem('token')
+  store.commit('revokeAuthentication')
 
   router.push('/signin')
 }
@@ -36,7 +36,7 @@ const logout = () => {
           </RouterLink>
 
           <template v-if="isAuthenticated">
-            <RouterLink to="/" class="nav-link fs-5 me-4" aria-current="page">Profile</RouterLink>
+            <RouterLink to="/users" class="nav-link fs-5 me-4" aria-current="page">Setting</RouterLink>
             <button type="button" class="btn btn-sm btn-outline-success my-2 my-sm-0 fs-5 me-4" @click= "logout">
               登出
             </button>
