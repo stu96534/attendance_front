@@ -32,7 +32,7 @@ const logout = () => {
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto mb-2 mb-md-0">
-          <RouterLink to="/" class="nav-link fs-5 me-4" aria-current="page" v-if="currentUser.isAdmin">Admin
+          <RouterLink to="/admin" class="nav-link fs-5 me-4" aria-current="page" v-if="currentUser.isAdmin">Admin
           </RouterLink>
 
           <template v-if="isAuthenticated">
