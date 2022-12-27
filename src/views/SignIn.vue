@@ -41,7 +41,7 @@ const handleSubmit = async () => {
 
     store.commit('setCurrentUser', data.user)
 
-    router.push("/attendant");
+    router.push("/mainpage");
 
   } catch (err: any) {
 

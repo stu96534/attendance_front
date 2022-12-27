@@ -20,9 +20,9 @@ const router = createRouter({
       component: SignIn,
     },
     {
-      path: '/attendant',
-      name: 'attendant',
-      component: () => import('../views/Attendant.vue'),
+      path: '/mainpage',
+      name: 'mainPage',
+      component: () => import('../views/MainPage.vue'),
     },
     {
       path: '/users',
@@ -58,7 +58,7 @@ router.beforeEach(async (to, from, next) => {
 
   //token有效且進入不需要驗證的頁面，則轉址到打卡首頁
   if (isAuthenticated && to.name === 'sign-in') {
-    next('/attendant')
+    next('/mainpage')
     return
   }
   
