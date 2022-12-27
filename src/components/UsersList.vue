@@ -7,8 +7,8 @@
       </div>
     
       <div>
-        <button type="button" class="btn btn-secondary me-2">Secondary</button>
-        <button type="button" class="btn btn-secondary">Secondary</button>
+        <button type="button" class="btn btn-secondary me-4">未上鎖</button>
+        <button type="button" class="btn btn-primary">出勤紀錄</button>
       </div>
     </li>
 
