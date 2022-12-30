@@ -1,4 +1,4 @@
-// import { NOTFOUND } from "dns";
+import { computed } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import NotFound from "../views/NotFound.vue";
 import SignIn from "../views/SignIn.vue"
@@ -47,12 +47,16 @@ router.beforeEach(async (to, from, next) => {
   //從localStorage 取出 token
   const token = localStorage.getItem('token')
 
+  const currentUser = computed(() => store.getters.currentUser);
+
   //預設尚未驗證
   let isAuthenticated = false
+  let isAdmin = false
 
   //有token才驗證
   if (token) {
     isAuthenticated = await store.dispatch('fetchCurrentUser')
+    isAdmin = currentUser.value.isAdmin
   }
 
    //token無效且進入需要驗證的頁面，則轉址到登入首頁
@@ -65,6 +69,11 @@ router.beforeEach(async (to, from, next) => {
   if (isAuthenticated && to.name === 'sign-in') {
     next('/mainpage')
     return
+  }
+
+  if(!isAdmin && to.name === 'admin') {
+  next('/mainpage')
+  return
   }
   
   next()

@@ -1,93 +1,3 @@
-<script setup lang="ts">
-import { ref, computed } from "vue";
-import usersAPI from "../apis/users";
-import { Toast } from "../utils/helpers"
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-
-const router = useRouter();
-const store = useStore();
-const currentUser = computed(() => store.getters.currentUser);
-const email = ref(currentUser.value.email
-);
-const password = ref("");
-const newPassword = ref("");
-const checkPassword = ref("");
-const isProcessing = ref(false)
-
-const handleSubmit = async () => {
-  try {
-    
-
-    if (!email.value.trim() || !password.value.trim() || !newPassword.value.trim() || !checkPassword.value.trim()) {
-      Toast.fire({
-        icon: 'warning',
-        title: '請輸入所有欄位'
-      })
-      return
-    } else if (newPassword.value.trim().length < 6 || newPassword.value.trim().length > 12) {
-      newPassword.value = ''
-      checkPassword.value = ''
-      Toast.fire({
-        icon: 'warning',
-        title: '密碼長度需為6~12字元'
-      })
-      return
-    } else if (newPassword.value.length !== checkPassword.value.length) {
-      checkPassword.value = ''
-      Toast.fire({
-        icon: 'warning',
-        title: '兩次密碼輸入不同'
-      })
-      return
-    }
-
-    isProcessing.value = true
-
-    const newData = {
-      email: email.value,
-      password: password.value,
-      newPassword: newPassword.value,
-      checkPassword: checkPassword.value
-    }
-
-    const { data } = await usersAPI.editCurrentUser({
-      userId: currentUser.value.id,
-      newData
-    })
-
-    if(data.status === 'error') {
-      throw new Error(data.message)
-    }
-
-    Toast.fire({
-      icon: 'success',
-      title: '密碼已更新'
-    })
-
-    password.value = ''
-    newPassword.value = ''
-    checkPassword.value = ''
-
-    isProcessing.value = false
-
-    router.push('/')
-
-  } catch (err: any) {
-    const errMsg = err.response.data;
-
-    Toast.fire({
-      icon: 'error',
-      title: errMsg.message
-    })
-
-    isProcessing.value = false
-    console.log("err", errMsg);
-  }
-
-};
-</script>
-
 <template>
   <div class="container py-5">
     <div class="card card-body mx-auto d-flex">
@@ -139,3 +49,91 @@ const handleSubmit = async () => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import usersAPI from "../apis/users";
+import { Toast } from "../utils/helpers"
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+
+const router = useRouter();
+const store = useStore();
+const currentUser = computed(() => store.getters.currentUser);
+const email = ref(currentUser.value.email
+);
+const password = ref("");
+const newPassword = ref("");
+const checkPassword = ref("");
+const isProcessing = ref(false)
+
+const handleSubmit = async () => {
+  try {
+
+
+    if (!email.value.trim() || !password.value.trim() || !newPassword.value.trim() || !checkPassword.value.trim()) {
+      Toast.fire({
+        icon: 'warning',
+        title: '請輸入所有欄位'
+      })
+      return
+    } else if (newPassword.value.trim().length < 6 || newPassword.value.trim().length > 12) {
+      newPassword.value = ''
+      checkPassword.value = ''
+      Toast.fire({
+        icon: 'warning',
+        title: '密碼長度需為6~12字元'
+      })
+      return
+    } else if (newPassword.value.length !== checkPassword.value.length) {
+      checkPassword.value = ''
+      Toast.fire({
+        icon: 'warning',
+        title: '兩次密碼輸入不同'
+      })
+      return
+    }
+
+    isProcessing.value = true
+
+    const newData = {
+      email: email.value,
+      password: password.value,
+      newPassword: newPassword.value,
+      checkPassword: checkPassword.value
+    }
+
+    const { data } = await usersAPI.editCurrentUser({
+      userId: currentUser.value.id,
+      newData
+    })
+
+    if (data.status === 'error') {
+      throw new Error(data.message)
+    }
+
+    Toast.fire({
+      icon: 'success',
+      title: '密碼已更新'
+    })
+
+    password.value = ''
+    newPassword.value = ''
+    checkPassword.value = ''
+
+    isProcessing.value = false
+
+    router.push('/')
+
+  } catch (err: any) {
+    const errMsg = err.response.data;
+
+    Toast.fire({
+      icon: 'error',
+      title: errMsg.message
+    })
+
+    isProcessing.value = false
+  }
+};
+</script>

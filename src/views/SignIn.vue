@@ -54,7 +54,6 @@ const handleSubmit = async () => {
 
     isProcessing.value = false
 
-      console.log(errMsg.message);
   
   }
 
