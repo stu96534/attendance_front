@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import NotFound from "../views/NotFound.vue";
 import SignIn from "../views/SignIn.vue"
 import store from "../store/index"
+import AttendanceRecordVue from "../views/AttendanceRecord.vue";
 
 
 
@@ -35,6 +36,11 @@ const router = createRouter({
       component: () => import('../views/AdminPage.vue'),
     },
     {
+      path: '/admin/user/:id',
+      name: 'attendant',
+      component: AttendanceRecordVue
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFound,
@@ -59,8 +65,8 @@ router.beforeEach(async (to, from, next) => {
     isAdmin = currentUser.value.isAdmin
   }
 
-   //token無效且進入需要驗證的頁面，則轉址到登入首頁
-  if(!isAuthenticated && to.name !== 'sign-in') {
+  //token無效且進入需要驗證的頁面，則轉址到登入首頁
+  if (!isAuthenticated && to.name !== 'sign-in') {
     next('/signin')
     return
   }
@@ -71,11 +77,11 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
-  if(!isAdmin && to.name === 'admin') {
-  next('/mainpage')
-  return
+  if (!isAdmin && to.name === 'admin') {
+    next('/mainpage')
+    return
   }
-  
+
   next()
 })
 

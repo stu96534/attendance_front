@@ -1,9 +1,9 @@
 import { apiHelper } from "../utils/helpers";
 
 export default {
-  addDate({ date, userId }: { date: string, userId: number}) {
-    return apiHelper.post(`/attendant/${userId}`, {
-      date
+  addDate({ userId, date }: { userId: number; date: number }) {
+    return apiHelper.put(`/attendant/${userId}`, {
+      date,
     });
   },
 };

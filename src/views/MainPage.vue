@@ -18,11 +18,7 @@
       </div>
 
       <div class="d-grid justify-content-center align-self-center">
-        <button
-          class="btn btn-success btn-block mb-3 fs-1 clock"
-          type="button"
-          @click.stop.prevent="handleSubmit"
-        >
+        <button class="btn btn-success btn-block mb-3 fs-1 clock" type="button" @click.stop.prevent="handleSubmit">
           Clock
         </button>
       </div>
@@ -42,17 +38,15 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import attendantAPI from "../apis/attendant";
-import { Toast } from "../utils/helpers";
 import Swal from "sweetalert2";
-import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
-const router = useRouter();
+
 const store = useStore();
 const currentUser = computed(() => store.getters.currentUser);
 const name = ref(currentUser.value.name);
 const image = ref(currentUser.value.image);
-const userId = ref(currentUser.value.userId);
+const userId = ref(currentUser.value.id);
 
 const nowTime = ref("");
 const nowDay = ref("");
@@ -98,15 +92,20 @@ function nowTimes() {
 
 nowTimes();
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   try {
-    const date = new Date().valueOf().toString();
-    attendantAPI.addDate({ userId, date });
+    const date = new Date().valueOf();
+    const { data } = await attendantAPI.addDate({ userId: userId.value, date });
+
+    if (data.status === 'error') {
+      throw new Error(data.message)
+    }
 
     Swal.fire({
       title: "Success",
-      text: "打卡成功",
+      text: data.message,
       icon: "success",
+      timer: 1300
     });
   } catch (error) {
     Swal.fire({
