@@ -18,7 +18,7 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto mb-2 mb-md-0">
           <RouterLink
-            to="/admin"
+            :to="{ name: 'admin', query: { page: 1 } }"
             class="nav-link fs-5 me-4"
             aria-current="page"
             v-if="currentUser.isAdmin"

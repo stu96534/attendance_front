@@ -18,7 +18,8 @@
       </div>
 
 
-      <button type="button" class="btn btn-primary col">出勤紀錄</button>
+      <RouterLink
+            :to="{ name: 'attendant', params: { id: user!.userId }, query: { month: 1 } }" type="button" class="btn btn-primary col me-3">出勤紀錄</RouterLink>
     </div>
   </li>
 </template>

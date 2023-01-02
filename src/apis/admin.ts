@@ -14,4 +14,8 @@ export default {
       email
     });
   },
+  getUserAttendant({ month, userId }: { month: any, userId: number }) {
+    const searchParams = new URLSearchParams({ month })
+    return apiHelper.get(`/admin/users/${userId}/attendant?${searchParams.toString()}`);
+  }
 };

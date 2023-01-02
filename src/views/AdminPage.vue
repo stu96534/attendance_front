@@ -45,7 +45,7 @@ import { onBeforeRouteUpdate,useRoute } from "vue-router";
 import Swal from "sweetalert2";
 import { Toast } from "../utils/helpers";
 
-const router = useRoute()
+const route = useRoute()
 
 const users = ref([]);
 const Pages = ref([]);
@@ -76,7 +76,7 @@ async function fetchUser({ page }: { page: any }) {
 }
 
 //顯示page頁面的資料
-const { page } = router.query
+const { page } = route.query
 fetchUser({ page: page })
 
 //點擊頁面，顯示該頁面資料
