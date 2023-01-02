@@ -23,7 +23,7 @@
         </button>
       </div>
 
-      <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
+      <p class="mt-5 mb-3 text-muted text-center">&copy; 2022-{{ nowYear }}</p>
     </div>
   </div>
 </template>
@@ -43,6 +43,7 @@ import { useStore } from "vuex";
 
 
 const store = useStore();
+const nowYear = new Date().getFullYear()
 const currentUser = computed(() => store.getters.currentUser);
 const name = ref(currentUser.value.name);
 const image = ref(currentUser.value.image);

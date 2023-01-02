@@ -1,65 +1,3 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import authorizationAPI from "./../apis/authorization";
-import { Toast } from "./../utils/helpers";
-import { useStore } from "vuex"
-
-const router = useRouter();
-const email = ref("");
-const password = ref("");
-const store = useStore();
-let isProcessing = ref(false);
-
-const handleSubmit = async () => {
-  try {
-
-    if (!email.value || !password.value) {
-      Toast.fire({
-        icon: 'warning',
-        title: '請填寫這個欄位。',
-      });
-      return
-    }
-
-    isProcessing.value =true
-
-
-    const { data } = await authorizationAPI
-      .signIn({
-        email: email.value,
-        password: password.value,
-      })
-    
-    if (data.status === "error") {
-
-      throw new Error(data.message);
-    }
-    
-
-    localStorage.setItem("token", data.token);
-
-    store.commit('setCurrentUser', data.user)
-
-    router.push("/mainpage");
-
-  } catch (err: any) {
-
-    const errMsg = err.response.data;
-
-      Toast.fire({
-        icon: 'error',
-        title: errMsg.message,
-      })
-
-    isProcessing.value = false
-
-  
-  }
-
-};
-</script>
-
 <template>
   <div class="container py-5">
     <div class="card card-body mx-auto d-flex">
@@ -90,11 +28,71 @@ const handleSubmit = async () => {
           </button>
         </div>
 
-        <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
+        <p class="mt-5 mb-3 text-muted text-center">&copy; 2022-{{ nowYear }}</p>
       </form>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import authorizationAPI from "./../apis/authorization";
+import { Toast } from "./../utils/helpers";
+import { useStore } from "vuex"
+
+const router = useRouter();
+const email = ref("");
+const password = ref("");
+const store = useStore();
+const nowYear = new Date().getFullYear()
+let isProcessing = ref(false);
+
+const handleSubmit = async () => {
+  try {
+
+    if (!email.value || !password.value) {
+      Toast.fire({
+        icon: 'warning',
+        title: '請填寫這個欄位。',
+      });
+      return
+    }
+
+    isProcessing.value = true
+
+    const { data } = await authorizationAPI
+      .signIn({
+        email: email.value,
+        password: password.value,
+      })
+
+    if (data.status === "error") {
+
+      throw new Error(data.message);
+    }
+
+
+    localStorage.setItem("token", data.token);
+
+    store.commit('setCurrentUser', data.user)
+
+    router.push("/mainpage");
+
+  } catch (err: any) {
+
+    const errMsg = err.response.data;
+
+    Toast.fire({
+      icon: 'error',
+      title: errMsg.message,
+    })
+
+    isProcessing.value = false
+
+  }
+};
+</script>
 
 <style>
 .card {

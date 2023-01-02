@@ -44,7 +44,7 @@
           </button>
         </div>
 
-        <p class="mt-5 mb-3 text-muted text-center">&copy; 2017-2018</p>
+        <p class="mt-5 mb-3 text-muted text-center">&copy; 2022-{{ nowYear }}</p>
       </form>
     </div>
   </div>
@@ -59,6 +59,7 @@ import { useStore } from "vuex";
 
 const router = useRouter();
 const store = useStore();
+const nowYear = new Date().getFullYear()
 const currentUser = computed(() => store.getters.currentUser);
 const email = ref(currentUser.value.email
 );
