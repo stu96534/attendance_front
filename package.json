@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "start": "node dist/assets/index-570ba8af.js",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest --environment jsdom --root src/",
