@@ -1,1 +1,1 @@
-web: vite
+web: npx vite
