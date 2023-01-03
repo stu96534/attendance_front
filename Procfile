@@ -1,1 +1,1 @@
-web: npx vite
+web: node src/main.ts
