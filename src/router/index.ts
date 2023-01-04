@@ -18,7 +18,7 @@ const router = createRouter({
     {
       path: '/signin',
       name: 'sign-in',
-      component: SignIn,
+      component: () => import('../views/SignIn.vue'), 
     },
     {
       path: '/mainpage',
@@ -38,7 +38,7 @@ const router = createRouter({
     {
       path: '/admin/user/:id',
       name: 'attendant',
-      component: AttendanceRecordVue
+      component: () => import('../views/AttendanceRecord.vue'),
     },
     {
       path: '/:pathMatch(.*)*',
