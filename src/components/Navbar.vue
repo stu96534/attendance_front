@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <RouterLink to="/" class="navbar-brand">鈦鉭出勤</RouterLink>
+      <RouterLink to="/" class="navbar-brand">鈦坦出勤</RouterLink>
 
       <button
         class="navbar-toggler"
