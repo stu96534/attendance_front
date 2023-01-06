@@ -119,7 +119,7 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
 let lat2 
 let lon2 
 
-const geo = navigator.geolocation.watchPosition(
+ navigator.geolocation.watchPosition(
   async function (position) {
     const { data } = await attendantAPI.getLocation()
     const { latitube, longitube } = data
@@ -131,12 +131,11 @@ const geo = navigator.geolocation.watchPosition(
       lat2 = latitube;
       lon2 = longitube;
     }
+
     let lat1 = position.coords.latitude;
     let lon1 = position.coords.longitude;
-
-    console.log(getDistance(lat1, lon1, lat2, lon2));
     let distance = getDistance(lat1, lon1, lat2, lon2);
-
+    
     if (distance < 400) {
       await usersAPI.putGPSDistance({ isDistance: true });
     } else {
