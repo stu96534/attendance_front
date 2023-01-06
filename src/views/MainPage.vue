@@ -40,7 +40,7 @@
 }
 </style>
 
-<script setup lang="ts">
+<script  setup lang="ts" >
 import { ref, computed } from "vue";
 import attendantAPI from "../apis/attendant";
 import usersAPI from "../apis/users";
@@ -116,12 +116,21 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
   return d * 1000;
 }
 
-let lat2 = 22.6514891;
-let lon2 = 120.33052;
+let lat2 
+let lon2 
 
-navigator.geolocation.watchPosition(
+const geo = navigator.geolocation.watchPosition(
   async function (position) {
-    // position是一个对象，包含有关用户位置的信息
+    const { data } = await attendantAPI.getLocation()
+    const { latitube, longitube } = data
+   
+    if (latitube === 0) {
+      lat2 = position.coords.latitude;
+      lon2 = position.coords.longitude;
+    } else {
+      lat2 = latitube;
+      lon2 = longitube;
+    }
     let lat1 = position.coords.latitude;
     let lon1 = position.coords.longitude;
 

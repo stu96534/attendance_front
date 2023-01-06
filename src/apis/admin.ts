@@ -17,5 +17,8 @@ export default {
   getUserAttendant({ month, userId }: { month: any, userId: number }) {
     const searchParams = new URLSearchParams({ month })
     return apiHelper.get(`/admin/users/${userId}/attendant?${searchParams.toString()}`);
+  },
+  changeLocation({ name }: { name: string }) {
+    return apiHelper.put(`/admin/location`, { name });
   }
 };

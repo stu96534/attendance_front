@@ -4,6 +4,10 @@
       <button type="button" class="btn btn-success btn-lg" @click="addUser">
         新增員工
       </button>
+
+      <button type="button" class="btn btn-warning btn-lg ms-3" @click="chooseLocation">
+        選擇地點
+      </button>
     </div>
 
     <div class="column mt-4">
@@ -25,7 +29,7 @@
 
       <div class="d-flex justify-content-center mt-3">
         <Pagination
-         v-if="Pages!.length > 1"
+          v-if="Pages!.length > 1"
           :current-page="currentPage"
           :total-page="Pages"
           :previous-page="prev"
@@ -41,11 +45,11 @@ import { ref } from "vue";
 import UsersList from "../components/UsersList.vue";
 import Pagination from "../components/UsersPagination.vue";
 import adminAPI from "../apis/admin";
-import { onBeforeRouteUpdate,useRoute } from "vue-router";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import Swal from "sweetalert2";
 import { Toast } from "../utils/helpers";
 
-const route = useRoute()
+const route = useRoute();
 
 const users = ref([]);
 const Pages = ref([]);
@@ -53,11 +57,10 @@ const currentPage = ref();
 const prev = ref();
 const next = ref();
 
-
 async function fetchUser({ page }: { page: any }) {
   try {
     const response = await adminAPI.getUsers({ page });
-    const pagination = response.data.pagination
+    const pagination = response.data.pagination;
 
     users.value = response.data.users;
 
@@ -65,25 +68,24 @@ async function fetchUser({ page }: { page: any }) {
     currentPage.value = pagination.currentPage;
     prev.value = pagination.prev;
     next.value = pagination.next;
-   
   } catch (error) {
-    console.log('error', error)
+    console.log("error", error);
     Toast.fire({
-      icon: 'error',
-      title: '無法取得使用者資料，請稍後再試'
-    })
+      icon: "error",
+      title: "無法取得使用者資料，請稍後再試",
+    });
   }
 }
 
 //顯示page頁面的資料
-const { page } = route.query
-fetchUser({ page: page })
+const { page } = route.query;
+fetchUser({ page: page });
 
 //點擊頁面，顯示該頁面資料
 onBeforeRouteUpdate((to, from) => {
-  const { page } = to.query
-  fetchUser({ page: page })
-})
+  const { page } = to.query;
+  fetchUser({ page: page });
+});
 
 //新增使用者資料，以sweetalert視窗輸入
 const addUser = async () => {
@@ -126,6 +128,49 @@ const addUser = async () => {
         Toast.fire({
           icon: "error",
           title: errMsg.message,
+        });
+      });
+  }
+};
+
+// 選擇工作地點
+
+const chooseLocation = async () => {
+  const inputOptions = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        "鈦坦高雄分公司": "鈦坦高雄分公司",
+        "當前位置": "當前位置"
+      });
+    }, 1000);
+  });
+
+  const { value: location } = await Swal.fire({
+    title: "Select location",
+    input: "radio",
+    inputOptions: inputOptions
+  });
+
+  if (location) {
+    Swal.fire({ html: `You selected: ${location}` });
+    await adminAPI.changeLocation({ name: location })
+      .then((result) => {
+        if (result) {
+          Swal.fire({
+            title: "Success",
+            text: "選擇成功",
+            icon: "success",
+            timer: 1300,
+          });
+        }
+      })
+      .catch((err) => {
+        const errMsg = err.response.data;
+
+        Swal.fire({
+          icon: "error",
+          title: errMsg.message,
+          timer: 1300,
         });
       });
   }

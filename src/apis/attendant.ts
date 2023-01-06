@@ -5,5 +5,8 @@ export default {
     return apiHelper.put(`/attendant/${userId}`, {
       date,
     });
+  },
+  getLocation() {
+    return apiHelper.get(`/attendant/location`);
   }
 };
