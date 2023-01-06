@@ -6,4 +6,7 @@ export default {
       date,
     });
   },
+  getDate() {
+    return apiHelper.get(`/attendant`);
+  },
 };

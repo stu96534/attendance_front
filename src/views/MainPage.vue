@@ -18,7 +18,12 @@
       </div>
 
       <div class="d-grid justify-content-center align-self-center">
-        <button class="btn btn-success btn-block mb-3 fs-1 clock" type="button" @click.stop.prevent="handleSubmit">
+        <button
+          class="btn btn-success btn-block mb-3 fs-1 clock"
+          type="button"
+          @click.stop.prevent="handleSubmit"
+          :disabled="!isDistance"
+        >
           Clock
         </button>
       </div>
@@ -38,16 +43,17 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import attendantAPI from "../apis/attendant";
+import usersAPI from "../apis/users";
 import Swal from "sweetalert2";
 import { useStore } from "vuex";
 
-
 const store = useStore();
-const nowYear = new Date().getFullYear()
+const nowYear = new Date().getFullYear();
 const currentUser = computed(() => store.getters.currentUser);
 const name = ref(currentUser.value.name);
 const image = ref(currentUser.value.image);
 const userId = ref(currentUser.value.id);
+const isDistance = ref(currentUser.value.isDistance);
 
 const nowTime = ref("");
 const nowDay = ref("");
@@ -56,6 +62,7 @@ if (!image.value) {
   image.value = "https://fakeimg.pl/120x130";
 }
 
+// 顯示日期、時間
 function timeFormate(timeStamp: any) {
   let newdate = new Date(timeStamp);
   let week = ["日", "一", "二", "三", "四", "五", "六"];
@@ -93,20 +100,60 @@ function nowTimes() {
 
 nowTimes();
 
+// GPS驗證
+function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; // 地球的平均半径，单位为千米
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c;
+  return d * 1000;
+}
+
+let lat2 = 22.6514891;
+let lon2 = 120.33052;
+
+navigator.geolocation.watchPosition(
+  async function (position) {
+    // position是一个对象，包含有关用户位置的信息
+    let lat1 = position.coords.latitude;
+    let lon1 = position.coords.longitude;
+
+    console.log(getDistance(lat1, lon1, lat2, lon2));
+    let distance = getDistance(lat1, lon1, lat2, lon2);
+
+    if (distance < 400) {
+      await usersAPI.putGPSDistance({ isDistance: true });
+    } else {
+      await usersAPI.putGPSDistance({ isDistance: false });
+    }
+  },
+  function (error) {
+    console.log(error);
+  }
+);
+
+// 打卡功能
 const handleSubmit = async () => {
   try {
     const date = new Date().valueOf();
     const { data } = await attendantAPI.addDate({ userId: userId.value, date });
 
-    if (data.status === 'error') {
-      throw new Error(data.message)
+    if (data.status === "error") {
+      throw new Error(data.message);
     }
 
     Swal.fire({
       title: "Success",
       text: data.message,
       icon: "success",
-      timer: 1300
+      timer: 1300,
     });
   } catch (error) {
     Swal.fire({

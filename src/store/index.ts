@@ -24,14 +24,15 @@ const store = createStore({
     async fetchCurrentUser ({ commit }) {
       try {
         const { data } = await usersAPI.getCurrentUser()
-        const { id, name, email, image, isAdmin } = data
+        const { id, name, email, image, isAdmin, isDistance } = data
 
         commit('setCurrentUser', {
           id,
           name,
           email,
           image,
-          isAdmin
+          isAdmin,
+          isDistance
         })
         return true
       } catch (error) {

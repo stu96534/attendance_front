@@ -76,8 +76,11 @@
       >
         缺勤
       </li>
+      <li id="absense" class="list-group-item text-success" v-else-if="attend">
+        到勤
+      </li>
       <li id="absense" class="list-group-item text-secondary" v-else>
-        未上班
+        尚未上班
       </li>
 
       <!-- 備註 -->
@@ -102,6 +105,7 @@ import adminAPI from "../apis/admin";
 
 const router = useRouter();
 const route = useRoute();
+const attend = ref(false)
 
 const allMonth = Array.from({ length: 12 }).map((v, i) => i + 1);
 
@@ -158,6 +162,7 @@ async function fetchAttendant({ month }: { month: any }) {
       const checkout = attendant["checkOut"];
       if (checkin) {
         attendant["checkIn"] = changeDate(checkin);
+        attend.value = true && !attendant['isAbsense']
       }
 
       if (checkout) {

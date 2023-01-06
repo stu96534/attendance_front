@@ -7,5 +7,10 @@ export default {
  },
   editCurrentUser({ userId, newData}: { userId: number, newData: object }) {
     return apiHelper.put(`/current_user/${userId}`, newData)
- }
+   },
+   putGPSDistance({ isDistance }: { isDistance: boolean }) {
+      return apiHelper.put(`/current_user/gpsDistance`, {
+         isDistance
+      })
+   }
 }
