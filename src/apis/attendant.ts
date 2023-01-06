@@ -5,8 +5,5 @@ export default {
     return apiHelper.put(`/attendant/${userId}`, {
       date,
     });
-  },
-  getDate() {
-    return apiHelper.get(`/attendant`);
-  },
+  }
 };
