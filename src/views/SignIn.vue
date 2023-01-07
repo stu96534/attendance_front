@@ -18,7 +18,7 @@
           <label for="password" class="me-5">Password</label>
           <div class="input">
             <input id="password" v-model="password" name="password" type="password" class="form-control"
-              placeholder="Password" autocomplete="current-password" required/>
+              placeholder="Password" autocomplete="current-password" required />
           </div>
         </div>
 
@@ -34,6 +34,8 @@
   </div>
 </template>
 
+
+
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -41,13 +43,13 @@ import authorizationAPI from "./../apis/authorization";
 import { Toast } from "./../utils/helpers";
 import { useStore } from "vuex"
 
+
 const router = useRouter();
 const email = ref("");
 const password = ref("");
 const store = useStore();
 const nowYear = new Date().getFullYear()
 let isProcessing = ref(false);
-
 
 
 const handleSubmit = async () => {
@@ -94,6 +96,7 @@ const handleSubmit = async () => {
 
   }
 };
+
 </script>
 
 <style>

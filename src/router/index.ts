@@ -1,11 +1,11 @@
 import { computed } from "vue";
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, useRouter } from "vue-router";
 import NotFound from "../views/NotFound.vue";
 import SignIn from "../views/SignIn.vue"
 import store from "../store/index"
 import AttendanceRecordVue from "../views/AttendanceRecord.vue";
 
-
+const route = useRouter()
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +41,16 @@ const router = createRouter({
       component: () => import('../views/AttendanceRecord.vue'),
     },
     {
+      path: '/qrcode',
+      name: 'Qrcode',
+      component: () => import('../views/QRcode.vue'),
+    },
+    {
+      path: '/qrcode_reader',
+      name: 'Qrcode-reader',
+      component: () => import('../views/QRcode_reader.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFound,
@@ -65,14 +75,16 @@ router.beforeEach(async (to, from, next) => {
     isAdmin = currentUser.value.isAdmin
   }
 
+  const pathsWithoutAuthentication = ['sign-in', 'Qrcode-reader']
+ 
   //token無效且進入需要驗證的頁面，則轉址到登入首頁
-  if (!isAuthenticated && to.name !== 'sign-in') {
-    next('/signin')
-    return
+  if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name as string)) {
+      next('/signin')
+      return
   }
 
   //token有效且進入不需要驗證的頁面，則轉址到打卡首頁
-  if (isAuthenticated && to.name === 'sign-in') {
+  if (isAuthenticated && pathsWithoutAuthentication.includes(to.name as string)) {
     next('/mainpage')
     return
   }
