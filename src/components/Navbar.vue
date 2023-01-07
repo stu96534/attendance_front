@@ -10,12 +10,8 @@
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto mb-2 mb-md-0">
-          <RouterLink to="/qrcode_reader" class="nav-link fs-5" v-if="!currentUser.isAdmin">
+          <RouterLink to="/qrcode_reader" class="nav-link fs-5" v-if="!isAuthenticated">
             QRcode Camera
-          </RouterLink>
-
-          <RouterLink to="/qrcode" class="nav-link fs-5 me-4" v-if="currentUser.isAdmin">
-            QRcode
           </RouterLink>
 
           <RouterLink :to="{ name: 'admin', query: { page: 1 } }" class="nav-link fs-5 me-4" aria-current="page"
@@ -23,7 +19,12 @@
           </RouterLink>
 
           <template v-if="isAuthenticated">
+            <RouterLink to="/qrcode" class="nav-link fs-5 me-4">
+              QRcode
+            </RouterLink>
+
             <RouterLink to="/users" class="nav-link fs-5 me-4" aria-current="page">Setting</RouterLink>
+            
             <button type="button" class="btn btn-sm btn-outline-success my-2 my-sm-0 fs-5 me-4" @click="logout">
               登出
             </button>
