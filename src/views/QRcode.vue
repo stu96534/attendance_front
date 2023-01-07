@@ -16,7 +16,7 @@ const token = localStorage.getItem('token')
 const currentUser = computed(() => store.getters.currentUser);
 const userId = ref(currentUser.value.id);
 
-let size = ref(500)
+let size = ref(300)
 let data = { userId: userId.value, token }
 let value = JSON.stringify(data)
 
