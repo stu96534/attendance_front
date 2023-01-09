@@ -64,11 +64,14 @@
       </li>
 
       <!-- 缺勤紀錄 -->
-      <li
+      <button
         id="holiday"
-        class="list-group-item text-danger"
-        v-if="attendant['isHoliday']"
-      ></li>
+        class="list-group-item text-danger disabled"
+        v-if="attendant['isHoliday'] && attendant['isAttendant']"
+      > 加班
+    </button>
+      <li id="holiday" class="list-group-item text-danger"
+        v-else-if="attendant['isHoliday']"></li>
       <button
         :id="attendant['id']"
         class="list-group-item btn-link text-warning absense"

@@ -49,7 +49,6 @@
 
 <script  setup lang="ts" >
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
 import attendantAPI from "../apis/attendant";
 import locationAPI from "../apis/location";
 import Swal from "sweetalert2";
@@ -57,7 +56,6 @@ import { useStore } from "vuex";
 import { getDistance } from "./../utils/helpers";
 
 const store = useStore();
-const router = useRouter();
 const nowYear = new Date().getFullYear();
 const currentUser = computed(() => store.getters.currentUser);
 const name = ref(currentUser.value.name);
@@ -116,6 +114,12 @@ nowTimes();
 let lat2 
 let lon2 
 
+const options = {
+  enableHighAccuracy: true,
+  timeout: Infinity,
+  maximumAge: 0
+};
+
 //判斷目前位置離工作地點是否在400公尺內
 navigator.geolocation.watchPosition(
   async function (position) {
@@ -134,7 +138,6 @@ navigator.geolocation.watchPosition(
     let lon1 = position.coords.longitude;
     let clock = document.querySelector('#clock')
     let distance = getDistance(lat1, lon1, lat2, lon2);
-     
      //若距離在400公尺外，打卡按鈕無效
     if (distance < 400) {
       clock?.classList.remove('disabled')
@@ -147,7 +150,8 @@ navigator.geolocation.watchPosition(
     console.log(error);
     let clock = document.querySelector('#clock')
     clock?.classList.add('disabled')
-  }
+  },
+  options
 );
 
 // 打卡功能
