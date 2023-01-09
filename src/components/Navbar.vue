@@ -10,7 +10,7 @@
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto mb-2 mb-md-0">
-          <RouterLink to="/qrcode_reader" class="nav-link fs-5 qr_camera" v-if="!isAuthenticated">
+          <RouterLink to="/qrcode_reader" class="nav-link fs-5 qr_camera disable" v-if="!isAuthenticated">
             QRcode Camera
           </RouterLink>
 
@@ -64,7 +64,7 @@ let lat2
 let lon2
 
 //判斷目前位置離工作地點是否在400公尺內
-navigator.geolocation.getCurrentPosition(
+navigator.geolocation.watchPosition(
   async function (position) {
     const { data } = await locationAPI.getLocation()
     const { latitube, longitube } = data
@@ -91,6 +91,8 @@ navigator.geolocation.getCurrentPosition(
   },
   function (error) {
     console.log(error);
+    let camera = document.querySelector('.qr_camera')
+    camera?.classList.add('disabled')
   }
 );
 </script>

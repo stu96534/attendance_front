@@ -25,7 +25,7 @@
       <div class="d-grid justify-content-center align-self-center">
         <button
         id="clock"
-          class="btn btn-success btn-block mb-3 fs-1"
+          class="btn btn-success btn-block mb-3 fs-1 disable"
           type="button"
           @click.stop.prevent="handleSubmit"
         >Clock
@@ -42,10 +42,14 @@
   width: 200px;
   height: 110px;
 }
+.card {
+  width: 600px;
+}
 </style>
 
 <script  setup lang="ts" >
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import attendantAPI from "../apis/attendant";
 import locationAPI from "../apis/location";
 import Swal from "sweetalert2";
@@ -53,6 +57,7 @@ import { useStore } from "vuex";
 import { getDistance } from "./../utils/helpers";
 
 const store = useStore();
+const router = useRouter();
 const nowYear = new Date().getFullYear();
 const currentUser = computed(() => store.getters.currentUser);
 const name = ref(currentUser.value.name);
@@ -112,7 +117,7 @@ let lat2
 let lon2 
 
 //判斷目前位置離工作地點是否在400公尺內
-navigator.geolocation.getCurrentPosition(
+navigator.geolocation.watchPosition(
   async function (position) {
     const { data } = await locationAPI.getLocation()
     const { latitube, longitube } = data
@@ -136,9 +141,12 @@ navigator.geolocation.getCurrentPosition(
     } else {
       clock?.classList.add('disabled')
     }
+    
   },
   function (error) {
     console.log(error);
+    let clock = document.querySelector('#clock')
+    clock?.classList.add('disabled')
   }
 );
 

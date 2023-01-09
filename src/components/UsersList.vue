@@ -9,14 +9,17 @@
     </div>
 
     <div class="row">
-      <div v-if="!user!.locked" class="col row me-2">
+      <div v-if="user!.isAdmin" class="col row me-2">
+        <button type="button" class="btn btn-danger me-4 disabled">管理者</button>
+      </div>
+
+      <div v-else-if="!user!.locked" class="col row me-2">
         <button type="button" class="btn btn-secondary me-4 disabled">未上鎖</button>
       </div>
 
       <div v-else class="col row me-4">
         <button type="button" class="btn btn-success me-4 " @click.stop.prevent="unlockUser({ userId: user!.userId })">解鎖</button>
       </div>
-
 
       <RouterLink
             :to="{ name: 'attendant', params: { id: user!.userId }, query: { month: 1, page: 1 } }" type="button" class="btn btn-primary col me-3">出勤紀錄</RouterLink>
