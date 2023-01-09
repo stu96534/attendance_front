@@ -12,9 +12,11 @@
 import { QrcodeStream } from "vue3-qrcode-reader";
 import attendantAPI from "../apis/attendant";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
 
 const store = useStore();
+const router = useRouter();
 
 const onDecode = async (decodedString) => {
   try {
@@ -34,6 +36,8 @@ const onDecode = async (decodedString) => {
     }); 
 
     store.commit("revokeAuthentication");
+
+    router.push("/signin");
 
   } catch (error) {
 
