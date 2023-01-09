@@ -1,6 +1,6 @@
 # 鈦坦出勤
 以前後端分離方式打造出勤打卡功能，此為前端專案。
-部屬網站為vercel 網址: https://attendance-management-tau.vercel.app
+- 部屬網站為vercel 網址: https://attendance-management-tau.vercel.app
 
 ## 測試帳號
 ### 管理者
