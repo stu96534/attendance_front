@@ -2,29 +2,33 @@
   <div class="container py-5">
     <div class="card card-body mx-auto d-flex">
       <div class="text-center">
+        <!-- 相片 -->
         <img :src="image" class="rounded mt-5" alt="..." />
       </div>
 
+      <!-- 名字 -->
       <div class="text-center mb-4">
         <h1 class="h3 mb-2 mt-4 font-weight-normal fs-1">{{ name }}</h1>
       </div>
 
+      <!-- 日期 -->
       <div class="text-center mb-4">
         <h1 class="h3 mb-3 mt-1 font-weight-normal fs-5">{{ nowDay }}</h1>
       </div>
 
+      <!-- 時間 -->
       <div class="text-center mb-4">
         <h1 class="h3 mt-1 font-weight-normal fs-1">{{ nowTime }}</h1>
       </div>
 
+      <!-- 打卡按鈕 -->
       <div class="d-grid justify-content-center align-self-center">
         <button
-          class="btn btn-success btn-block mb-3 fs-1 clock"
+        id="clock"
+          class="btn btn-success btn-block mb-3 fs-1"
           type="button"
           @click.stop.prevent="handleSubmit"
-          :disabled="!isDistance"
-        >
-          Clock
+        >Clock
         </button>
       </div>
 
@@ -34,7 +38,7 @@
 </template>
 
 <style>
-.clock {
+#clock {
   width: 200px;
   height: 110px;
 }
@@ -43,9 +47,10 @@
 <script  setup lang="ts" >
 import { ref, computed } from "vue";
 import attendantAPI from "../apis/attendant";
-import usersAPI from "../apis/users";
+import locationAPI from "../apis/location";
 import Swal from "sweetalert2";
 import { useStore } from "vuex";
+import { getDistance } from "./../utils/helpers";
 
 const store = useStore();
 const nowYear = new Date().getFullYear();
@@ -53,11 +58,11 @@ const currentUser = computed(() => store.getters.currentUser);
 const name = ref(currentUser.value.name);
 const image = ref(currentUser.value.image);
 const userId = ref(currentUser.value.id);
-const isDistance = ref(currentUser.value.isDistance);
 
 const nowTime = ref("");
 const nowDay = ref("");
 
+//如果沒有image，用預設圖片
 if (!image.value) {
   image.value = "https://fakeimg.pl/120x130";
 }
@@ -101,27 +106,15 @@ function nowTimes() {
 nowTimes();
 
 // GPS驗證
-function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371; // 地球的平均半径，单位为千米
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c;
-  return d * 1000;
-}
 
+//工作地點經緯度
 let lat2 
 let lon2 
 
- navigator.geolocation.watchPosition(
+//判斷目前位置離工作地點是否在400公尺內
+navigator.geolocation.getCurrentPosition(
   async function (position) {
-    const { data } = await attendantAPI.getLocation()
+    const { data } = await locationAPI.getLocation()
     const { latitube, longitube } = data
    
     if (latitube === 0) {
@@ -134,12 +127,14 @@ let lon2
 
     let lat1 = position.coords.latitude;
     let lon1 = position.coords.longitude;
+    let clock = document.querySelector('#clock')
     let distance = getDistance(lat1, lon1, lat2, lon2);
-    
+     
+     //若距離在400公尺外，打卡按鈕無效
     if (distance < 400) {
-      await usersAPI.putGPSDistance({ isDistance: true });
+      clock?.classList.remove('disabled')
     } else {
-      await usersAPI.putGPSDistance({ isDistance: false });
+      clock?.classList.add('disabled')
     }
   },
   function (error) {
@@ -157,17 +152,33 @@ const handleSubmit = async () => {
       throw new Error(data.message);
     }
 
-    Swal.fire({
-      title: "Success",
-      text: data.message,
-      icon: "success",
-      timer: 1300,
-    });
+    if (data.message === '上班打卡成功') {
+      Swal.fire({
+        title: data.message,
+        text: "祝你有美好的一天",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1300,
+      });
+    }
+
+    if (data.message === '下班打卡成功') {
+      Swal.fire({
+        title: data.message,
+        text: "辛苦了 路上小心~~~",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1300,
+      });
+    }
+
   } catch (error) {
     Swal.fire({
       title: "Error",
       text: "打卡失敗",
       icon: "error",
+      showConfirmButton: false,
+      timer: 1300
     });
   }
 };

@@ -55,6 +55,7 @@ let isProcessing = ref(false);
 const handleSubmit = async () => {
   try {
 
+    //帳號密碼欄位錯誤判斷
     if (!email.value || !password.value) {
       Toast.fire({
         icon: 'warning',
@@ -63,8 +64,10 @@ const handleSubmit = async () => {
       return
     }
 
+    //傳送資料將submit按鈕disable，以防資料多次傳送
     isProcessing.value = true
 
+    //傳送登入的資料
     const { data } = await authorizationAPI
       .signIn({
         email: email.value,
@@ -72,15 +75,16 @@ const handleSubmit = async () => {
       })
 
     if (data.status === "error") {
-
       throw new Error(data.message);
     }
 
-
+    //存入token到localStorage
     localStorage.setItem("token", data.token);
 
+    //存入user資料
     store.commit('setCurrentUser', data.user)
 
+    //轉址到主頁面
     router.push("/mainpage");
 
   } catch (err: any) {
@@ -96,7 +100,6 @@ const handleSubmit = async () => {
 
   }
 };
-
 </script>
 
 <style>

@@ -20,7 +20,7 @@
       <li id="date" class="list-group-item border-dark">日期</li>
       <li id="checkIn" class="list-group-item border-dark">上班時間</li>
       <li id="checkOut" class="list-group-item border-dark">下班時間</li>
-      <li id="absense" class="list-group-item border-dark">缺勤紀錄</li>
+      <li id="absenseRC" class="list-group-item border-dark absense">缺勤紀錄</li>
       <li id="descriptions" class="list-group-item border-dark">備註</li>
     </ul>
 
@@ -65,23 +65,24 @@
 
       <!-- 缺勤紀錄 -->
       <li
-        id="absense"
+        id="holiday"
         class="list-group-item text-danger"
         v-if="attendant['isHoliday']"
       ></li>
-      <li
-        id="absense"
-        class="list-group-item text-warning"
+      <button
+        :id="attendant['id']"
+        class="list-group-item btn-link text-warning absense"
         v-else-if="attendant['isAbsense']"
+        @click="changeAtt"
       >
         缺勤
-      </li>
-      <li id="absense" class="list-group-item text-success" v-else-if="attend">
+      </button>
+      <button id="attendant" class="list-group-item text-success disabled" v-else-if="attendant['isAttendant']">
         到勤
-      </li>
-      <li id="absense" class="list-group-item text-secondary" v-else>
+      </button>
+      <button id="noWork" class="list-group-item text-secondary disabled" v-else>
         尚未上班
-      </li>
+      </button>
 
       <!-- 備註 -->
       <li
@@ -95,102 +96,114 @@
         {{ attendant["description"] }}
       </li>
     </ul>
+
+    <!-- 頁碼 -->
+    <div class="d-flex justify-content-center mt-3">
+      <Pagination v-if="Pages!.length > 1" :current-page="currentPage" :total-page="Pages" :previous-page="prev"
+        :next-page="next" :Month="Month" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import { onBeforeRouteUpdate, useRouter, useRoute } from "vue-router";
+import Swal from "sweetalert2";
 import adminAPI from "../apis/admin";
+import Pagination from "../components/AttPagination.vue";
+import { changeDate, Toast } from "../utils/helpers";
 
 const router = useRouter();
 const route = useRoute();
-const attend = ref(false)
 
 const allMonth = Array.from({ length: 12 }).map((v, i) => i + 1);
 
 const monthRouter = (event: any) => {
   router.push({
     name: "attendant",
-    query: { month: event.target.value },
+    query: { month: event.target.value, page: 1 },
   });
 };
 
-function changeDate(date: number) {
-const newdate = new Date(date)
-let nowDay = ''
-
-  let month =
-    newdate.getMonth() + 1 < 10
-      ? "0" + (newdate.getMonth() + 1)
-      : newdate.getMonth() + 1;
-  let day =
-    newdate.getDate() < 10 ? "0" + newdate.getDate() : newdate.getDate();
-  let hh =
-    newdate.getHours() < 10 ? "0" + newdate.getHours() : newdate.getHours();
-  let mm =
-    newdate.getMinutes() < 10
-      ? "0" + newdate.getMinutes()
-      : newdate.getMinutes();
-  let ss =
-    newdate.getSeconds() < 10
-      ? "0" + newdate.getSeconds()
-      : newdate.getSeconds();
-  nowDay = month + '/' + day + ' ' + hh + ':' + mm + ':' + ss
-
-  return nowDay
-}
 
 const attendants = ref([]);
-// const Pages = ref([]);
-// const currentPage = ref();
-// const prev = ref();
-// const next = ref();
+const Month = ref();
+const Pages = ref([]);
+const currentPage = ref();
+const prev = ref();
+const next = ref();
 
-async function fetchAttendant({ month }: { month: any }) {
+async function fetchAttendant({ month, page }: { month: any, page: any }) {
   try {
     const response = await adminAPI.getUserAttendant({
       month,
       userId: Number(route.params.id),
+      page
     });
-    // const pagination = response.data.pagination
 
-    attendants.value = response.data;
+    //頁碼
+    const pagination = response.data.pagination
+
+    Pages.value = pagination.pages;
+    currentPage.value = pagination.currentPage;
+    prev.value = pagination.prev;
+    next.value = pagination.next;
+
+    //月份
+    Month.value = response.data.month
+
+    //出勤資料
+    attendants.value = response.data.attendants;
 
     attendants.value.map((attendant: any) => {
       const checkin = attendant["checkIn"];
       const checkout = attendant["checkOut"];
       if (checkin) {
         attendant["checkIn"] = changeDate(checkin);
-        attend.value = true && !attendant['isAbsense']
       }
 
       if (checkout) {
         attendant["checkOut"] = changeDate(checkout);
       }
 
-      // console.log(x["checkIn"]);
     });
-    // Pages.value = pagination.pages;
-    // currentPage.value = pagination.currentPage;
-    // prev.value = pagination.prev;
-    // next.value = pagination.next;
+   
   } catch (error) {
     console.log("error", error);
-    // Toast.fire({
-    //   icon: 'error',
-    //   title: '無法取得使用者資料，請稍後再試'
-    // })
+    Toast.fire({
+      icon: 'error',
+      title: '無法取得使用者資料，請稍後再試'
+    })
   }
 }
 
-const { month } = route.query;
-fetchAttendant({ month: month });
+const { month, page } = route.query;
+fetchAttendant({ month: month, page: page });
 
 onBeforeRouteUpdate((to, from) => {
-  const { month } = to.query;
-  fetchAttendant({ month: month });
+  const { month, page } = to.query;
+  fetchAttendant({ month: month, page: page });
 });
+
+
+
+const changeAtt = async (event: any) => {
+  const id = event.target.id
+
+  Swal.fire({
+    title: "要改成'到勤'嗎?",
+    showDenyButton: true,
+    confirmButtonText: '確定',
+    denyButtonText: `取消`,
+  }).then( async (result) => {
+    if (result.isConfirmed) {
+      await adminAPI.changeAttendant({ id })
+      router.go(0)
+    } else if (result.isDenied) {
+      Swal.fire('Changes are not saved', '', 'info')
+    }
+  })
+}
 </script>
 
 <style>
@@ -206,10 +219,21 @@ onBeforeRouteUpdate((to, from) => {
   width: 350px;
 }
 
-#absense {
+#holiday {
   width: 200px;
 }
 
+.absense {
+  width: 200px;
+}
+
+#attendant{
+    width: 200px;
+  }
+
+#noWork {
+      width: 200px;
+    }
 #descriptions {
   width: 200px;
 }

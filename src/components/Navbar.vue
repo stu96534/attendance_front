@@ -10,7 +10,7 @@
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto mb-2 mb-md-0">
-          <RouterLink to="/qrcode_reader" class="nav-link fs-5" v-if="!isAuthenticated">
+          <RouterLink to="/qrcode_reader" class="nav-link fs-5 qr_camera" v-if="!isAuthenticated">
             QRcode Camera
           </RouterLink>
 
@@ -39,6 +39,8 @@
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+import locationAPI from "../apis/location";
+import { getDistance } from "./../utils/helpers";
 
 const router = useRouter();
 const store = useStore();
@@ -47,10 +49,48 @@ const currentUser = computed(() => store.getters.currentUser);
 
 const isAuthenticated = computed(() => store.getters.isAuthenticated);
 
+//登出
 const logout = () => {
   store.commit("revokeAuthentication");
 
-  router.push("/signin");
+  router.push("/sigin");
+  router.go(0)
 };
 
+// GPS驗證
+
+//工作地點經緯度
+let lat2
+let lon2
+
+//判斷目前位置離工作地點是否在400公尺內
+navigator.geolocation.getCurrentPosition(
+  async function (position) {
+    const { data } = await locationAPI.getLocation()
+    const { latitube, longitube } = data
+
+    if (latitube === 0) {
+      lat2 = position.coords.latitude;
+      lon2 = position.coords.longitude;
+    } else {
+      lat2 = latitube;
+      lon2 = longitube;
+    }
+
+    let lat1 = position.coords.latitude;
+    let lon1 = position.coords.longitude;
+    let camera = document.querySelector('.qr_camera')
+    let distance = getDistance(lat1, lon1, lat2, lon2);
+
+    //若距離在400公尺外，QRCode Camera無效
+    if (distance < 400) {
+      camera?.classList.remove('disabled')
+    } else {
+      camera?.classList.add('disabled')
+    }
+  },
+  function (error) {
+    console.log(error);
+  }
+);
 </script>

@@ -1,9 +1,7 @@
 import { computed } from "vue";
 import { createRouter, createWebHistory, useRouter } from "vue-router";
 import NotFound from "../views/NotFound.vue";
-import SignIn from "../views/SignIn.vue"
 import store from "../store/index"
-import AttendanceRecordVue from "../views/AttendanceRecord.vue";
 
 const route = useRouter()
 

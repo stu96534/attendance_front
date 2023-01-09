@@ -19,7 +19,7 @@
 
 
       <RouterLink
-            :to="{ name: 'attendant', params: { id: user!.userId }, query: { month: 1 } }" type="button" class="btn btn-primary col me-3">出勤紀錄</RouterLink>
+            :to="{ name: 'attendant', params: { id: user!.userId }, query: { month: 1, page: 1 } }" type="button" class="btn btn-primary col me-3">出勤紀錄</RouterLink>
     </div>
   </li>
 </template>

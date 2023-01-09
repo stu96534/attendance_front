@@ -71,7 +71,7 @@ const isProcessing = ref(false)
 const handleSubmit = async () => {
   try {
 
-
+    //欄位錯誤判斷
     if (!email.value.trim() || !password.value.trim() || !newPassword.value.trim() || !checkPassword.value.trim()) {
       Toast.fire({
         icon: 'warning',
@@ -95,8 +95,10 @@ const handleSubmit = async () => {
       return
     }
 
+    //傳送資料將submit按鈕disable，以防資料多次傳送
     isProcessing.value = true
 
+    //取得欄位資料
     const newData = {
       email: email.value,
       password: password.value,
@@ -104,6 +106,7 @@ const handleSubmit = async () => {
       checkPassword: checkPassword.value
     }
 
+    //傳送需更新的資料
     const { data } = await usersAPI.editCurrentUser({
       userId: currentUser.value.id,
       newData

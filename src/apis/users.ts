@@ -2,15 +2,12 @@ import { apiHelper } from '../utils/helpers'
 
 
 export default {
- getCurrentUser () {
-    return apiHelper.get(`/current_user`)
- },
-  editCurrentUser({ userId, newData}: { userId: number, newData: object }) {
-    return apiHelper.put(`/current_user/${userId}`, newData)
+   //取得登入員工資料
+   getCurrentUser() {
+      return apiHelper.get(`/current_user`)
    },
-   putGPSDistance({ isDistance }: { isDistance: boolean }) {
-      return apiHelper.put(`/current_user/gpsDistance`, {
-         isDistance
-      })
+   //修改密碼功能
+   editCurrentUser({ userId, newData }: { userId: number, newData: object }) {
+      return apiHelper.put(`/current_user/${userId}`, newData)
    }
 }
