@@ -61,4 +61,18 @@ npm run build
 npm run lint
 ```
 
+## 開發工具
+### window 10
+ - Visual Studio Code
+ - vite 版本 4.0.0
+ - Vue3 版本 3.2.45
+ - vue-router 版本 4.1.6
+ - vuex 版本 4.1.0
+ - TypeSript 版本 4.7.4
+ - bootstrap 版本 5.1.3
+ - bootswatch 版本 5.2.3
+ - axois 版本 0.19.2
+ - sweetalert 版本 11.6.16
+ - qrcode.vue 版本 3.3.3
+ - vue3-qrcode-reader 版本 0.0.1
 
