@@ -6,10 +6,10 @@
           <h1 class="h3 mb-3 mt-4 font-weight-normal fs-1">Login</h1>
         </div>
 
-        <div class="form-label-group mb-3 ms-5 mt-5 d-flex align-items-center fs-5">
-          <label for="email" class="me-5">Email </label>
+        <div class="form-label-group mb-3 ms-4 mt-5 d-flex align-items-center fs-5">
+          <label for="account" class="me-5">Account </label>
           <div class="input">
-            <input id="email" v-model="email" name="email" type="email" class="form-control" placeholder="email"
+            <input id="account" v-model="account" name="account" type="account" class="form-control" placeholder="account"
               autocomplete="username" required autofocus />
           </div>
         </div>
@@ -45,7 +45,7 @@ import { useStore } from "vuex"
 
 
 const router = useRouter();
-const email = ref("");
+const account = ref("");
 const password = ref("");
 const store = useStore();
 const nowYear = new Date().getFullYear()
@@ -56,7 +56,7 @@ const handleSubmit = async () => {
   try {
 
     //帳號密碼欄位錯誤判斷
-    if (!email.value || !password.value) {
+    if (!account.value || !password.value) {
       Toast.fire({
         icon: 'warning',
         title: '請填寫這個欄位。',
@@ -70,7 +70,7 @@ const handleSubmit = async () => {
     //傳送登入的資料
     const { data } = await authorizationAPI
       .signIn({
-        email: email.value,
+        account: account.value,
         password: password.value,
       })
 

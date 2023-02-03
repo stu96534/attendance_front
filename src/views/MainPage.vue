@@ -3,7 +3,7 @@
     <div class="card card-body mx-auto d-flex">
       <div class="text-center">
         <!-- 相片 -->
-        <img :src="image" class="rounded mt-5" alt="..." />
+        <img src="https://fakeimg.pl/120x130" class="rounded mt-5" alt="..." />
       </div>
 
       <!-- 名字 -->
@@ -108,51 +108,32 @@ function nowTimes() {
 
 nowTimes();
 
-// GPS驗證
+// // GPS驗證
 
-//工作地點經緯度
-let lat2 
-let lon2 
+// //工作地點經緯度
 
-const options = {
-  enableHighAccuracy: true,
-  timeout: Infinity,
-  maximumAge: 0
-};
+// const options = {
+//   enableHighAccuracy: true,
+//   timeout: Infinity,
+//   maximumAge: 0
+// };
 
-//判斷目前位置離工作地點是否在400公尺內
-navigator.geolocation.watchPosition(
-  async function (position) {
-    const { data } = await locationAPI.getLocation()
-    const { latitube, longitube } = data
-   
-    if (latitube === 0) {
-      lat2 = position.coords.latitude;
-      lon2 = position.coords.longitude;
-    } else {
-      lat2 = latitube;
-      lon2 = longitube;
-    }
+// //判斷目前位置離工作地點是否在400公尺內
+// navigator.geolocation.getCurrentPosition(
+//   async function (position) {
+//     const { data } = await locationAPI.getLocation()
+//     const { latitube, longitube } = data
 
-    let lat1 = position.coords.latitude;
-    let lon1 = position.coords.longitude;
-    let clock = document.querySelector('#clock')
-    let distance = getDistance(lat1, lon1, lat2, lon2);
-     //若距離在400公尺外，打卡按鈕無效
-    if (distance < 400) {
-      clock?.classList.remove('disabled')
-    } else {
-      clock?.classList.add('disabled')
-    }
+//     let lat1 = position.coords.latitude;
+//     let lon1 = position.coords.longitude;
+
     
-  },
-  function (error) {
-    console.log(error);
-    let clock = document.querySelector('#clock')
-    clock?.classList.add('disabled')
-  },
-  options
-);
+//   },
+//   function (error) {
+//     console.log(error);
+//   },
+//   options
+// );
 
 // 打卡功能
 const handleSubmit = async () => {

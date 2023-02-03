@@ -95,7 +95,8 @@ const addUser = async () => {
       title: "輸入你的資料",
       html:
         "name: <input type='text' id='swal-input1' class='swal2-input input-group-sm'>" +
-        "email: <input type='email' id='swal-input2' class='swal2-input'>",
+        "account: <input type='account' id='swal-input2' class='swal2-input'>" +
+        "email: <input type='email' id='swal-input3' class='swal2-input'>",
       focusConfirm: false,
       inputAttributes: {
         accept: "image/*",
@@ -105,6 +106,7 @@ const addUser = async () => {
         return [
           (document.getElementById("swal-input1") as HTMLInputElement).value,
           (document.getElementById("swal-input2") as HTMLInputElement).value,
+          (document.getElementById("swal-input3") as HTMLInputElement).value,
         ];
       },
     });
@@ -113,7 +115,8 @@ const addUser = async () => {
       const user = await adminAPI
         .addUser({
           name: data[0],
-          email: data[1],
+          account: data[1],
+          email: data[2],
         })
 
       if (user) {

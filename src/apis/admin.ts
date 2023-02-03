@@ -11,9 +11,10 @@ export default {
     return apiHelper.put(`/admin/users/${userId}/unlock`);
   },
   //新增員工
-  addUser({ name, email }: { name: string; email: string }) {
+  addUser({ name, account, email }: { name: string, account: string, email: string }) {
     return apiHelper.post(`/admin/users`, {
       name,
+      account,
       email
     });
   },
