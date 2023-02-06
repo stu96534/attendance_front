@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light ">
     <div class="container-fluid">
-      <RouterLink to="/" class="navbar-brand">鈦坦出勤</RouterLink>
+      <RouterLink to="/" class="navbar-brand">打卡出勤系統</RouterLink>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
         aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
