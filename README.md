@@ -1,14 +1,14 @@
-# 鈦坦出勤
+# 打卡出勤系統
 以前後端分離方式打造出勤打卡功能，此為前端專案。
 - 部屬網站為vercel 網址: https://attendance-management-tau.vercel.app
 - 後端專案連結：https://github.com/stu96534/attendance_api
 
 ## 測試帳號
 ### 管理者
-- 帳號: root@example.com
+- 帳號: admin
 - 密碼: tiadmin
 ### 一般使用者
-- 帳號: user1@example.com
+- 帳號: user1
 - 密碼: titaner
 
 ## 功能介紹
@@ -20,7 +20,7 @@
  - 可按登出鍵登出
 ### 管理者
  - 一般使用者擁有的基本功能
- - 管理者若輸入密碼錯誤達5次以上則變為預設密碼
+ - 管理者若輸入密碼錯誤達5次以上則變為預設密碼(tiadmin)
  - 觀看各個使用者出勤紀錄
  - 若使用者上鎖，可進行解鎖
  - 可新增一般使用者
@@ -34,8 +34,6 @@
  - 換日時間為上午五點 (GMT+8)
  - 出缺勤僅計算工作日(根據台灣行事曆)
  - 假日上班會註記加班
- - GPS 打卡功能: 在辦公室 400m 內就可以打卡 (功能不完善，需再優化)
- - QRcode 打卡功能: 每位員工有自己專屬QRCode，開啟登入頁的QRCode camera掃描即可打卡 (功能不完善，需再優化)
 
 ## 安裝
 
@@ -73,6 +71,4 @@ npm run lint
  - bootswatch 版本 5.2.3
  - axois 版本 0.19.2
  - sweetalert 版本 11.6.16
- - qrcode.vue 版本 3.3.3
- - vue3-qrcode-reader 版本 0.0.1
 
