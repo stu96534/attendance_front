@@ -39,16 +39,6 @@ const router = createRouter({
       component: () => import('../views/AttendanceRecord.vue'),
     },
     {
-      path: '/qrcode',
-      name: 'Qrcode',
-      component: () => import('../views/QRcode.vue'),
-    },
-    {
-      path: '/qrcode_reader',
-      name: 'Qrcode-reader',
-      component: () => import('../views/QRcode_reader.vue'),
-    },
-    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFound,

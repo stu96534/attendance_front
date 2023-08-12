@@ -10,18 +10,12 @@
 
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav ms-auto mb-2 mb-md-0">
-          <!-- <RouterLink to="/qrcode_reader" class="nav-link fs-5 qr_camera disable" v-if="!isAuthenticated">
-            QRcode Camera
-          </RouterLink> -->
 
           <RouterLink :to="{ name: 'admin', query: { page: 1 } }" class="nav-link fs-5 me-4" aria-current="page"
             v-if="currentUser.isAdmin">Admin
           </RouterLink>
 
           <template v-if="isAuthenticated">
-            <!-- <RouterLink to="/qrcode" class="nav-link fs-5 me-4">
-              QRcode
-            </RouterLink> -->
 
             <RouterLink to="/users" class="nav-link fs-5 me-4" aria-current="page">Setting</RouterLink>
             
