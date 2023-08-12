@@ -50,10 +50,8 @@
 <script  setup lang="ts" >
 import { ref, computed } from "vue";
 import attendantAPI from "../apis/attendant";
-import locationAPI from "../apis/location";
 import Swal from "sweetalert2";
 import { useStore } from "vuex";
-import { getDistance } from "./../utils/helpers";
 
 const store = useStore();
 const nowYear = new Date().getFullYear();
@@ -107,33 +105,6 @@ function nowTimes() {
 }
 
 nowTimes();
-
-// // GPS驗證
-
-// //工作地點經緯度
-
-// const options = {
-//   enableHighAccuracy: true,
-//   timeout: Infinity,
-//   maximumAge: 0
-// };
-
-// //判斷目前位置離工作地點是否在400公尺內
-// navigator.geolocation.getCurrentPosition(
-//   async function (position) {
-//     const { data } = await locationAPI.getLocation()
-//     const { latitube, longitube } = data
-
-//     let lat1 = position.coords.latitude;
-//     let lon1 = position.coords.longitude;
-
-    
-//   },
-//   function (error) {
-//     console.log(error);
-//   },
-//   options
-// );
 
 // 打卡功能
 const handleSubmit = async () => {
