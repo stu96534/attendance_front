@@ -49,7 +49,7 @@
           <td class="text-success" v-else>到勤</td>
 
           <!-- 備註 -->
-          <td><button :id="attendant['id']" class="btn btn-sm btn-primary" v-if="attendant['isAbsense']"
+          <td><button :id="attendant['id']" class="btn btn-sm btn-primary" v-if="attendant['isAbsense'] && !attendant['isHoliday']"
               @click="changeAtt">改為到勤</button></td>
         </tr>
 
