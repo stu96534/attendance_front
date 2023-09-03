@@ -18,7 +18,7 @@
           <template v-if="isAuthenticated">
 
             <RouterLink to="/users" class="nav-link fs-5 me-4" aria-current="page">Setting</RouterLink>
-            
+
             <button type="button" class="btn btn-sm btn-outline-success my-2 my-sm-0 fs-5 me-4" @click="logout">
               登出
             </button>
@@ -32,61 +32,21 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-// import locationAPI from "../apis/location";
-// import { getDistance } from "./../utils/helpers";
+import { useAuthUserStore } from "../stores/auth-user";
 
 const router = useRouter();
-const store = useStore();
+const authUserStore = useAuthUserStore();
 
-const currentUser = computed(() => store.getters.currentUser);
+const currentUser = computed(() => authUserStore.currentUser);
 
-const isAuthenticated = computed(() => store.getters.isAuthenticated);
+const isAuthenticated = computed(() => authUserStore.isAuthenticated);
 
 //登出
 const logout = () => {
-  store.commit("revokeAuthentication");
+  authUserStore.revokeAuthentication()
 
   router.push("/sigin");
   router.go(0)
 };
 
-// // GPS驗證
-
-// //工作地點經緯度
-// let lat2
-// let lon2
-
-// //判斷目前位置離工作地點是否在400公尺內
-// navigator.geolocation.watchPosition(
-//   async function (position) {
-//     const { data } = await locationAPI.getLocation()
-//     const { latitube, longitube } = data
-
-//     if (latitube === 0) {
-//       lat2 = position.coords.latitude;
-//       lon2 = position.coords.longitude;
-//     } else {
-//       lat2 = latitube;
-//       lon2 = longitube;
-//     }
-
-//     let lat1 = position.coords.latitude;
-//     let lon1 = position.coords.longitude;
-//     let camera = document.querySelector('.qr_camera')
-//     let distance = getDistance(lat1, lon1, lat2, lon2);
-
-//     //若距離在400公尺外，QRCode Camera無效
-//     if (distance < 400) {
-//       camera?.classList.remove('disabled')
-//     } else {
-//       camera?.classList.add('disabled')
-//     }
-//   },
-//   function (error) {
-//     console.log(error);
-//     let camera = document.querySelector('.qr_camera')
-//     camera?.classList.add('disabled')
-//   }
-// );
 </script>

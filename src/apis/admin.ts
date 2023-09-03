@@ -21,7 +21,7 @@ export default {
   //取得員工出勤紀錄
   getUserAttendant({ month, userId, page }: { month: any, userId: number, page: any }) {
     const searchParams = new URLSearchParams({ month, page })
-    return apiHelper.get(`/admin/users/${userId}/attendant?${searchParams.toString()}`);
+    return apiHelper.get(`/admin/users/${userId}/attendants?${searchParams.toString()}`);
   },
   //改變工作地點功能
   changeLocation({ name }: { name: string }) {

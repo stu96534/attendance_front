@@ -1,24 +1,25 @@
 <template>
-  <div class="container py-5">
-    <div class="card card-body mx-auto d-flex">
+  <div class="container mt-5 col-sm-6">
+    <div class="card card-body  d-block">
       <form class="w-100" @submit.prevent.stop="handleSubmit">
         <div class="text-center mb-4">
           <h1 class="h3 mb-3 mt-4 font-weight-normal fs-1">Login</h1>
         </div>
 
-        <div class="form-label-group mb-3 ms-4 mt-5 d-flex align-items-center fs-5">
-          <label for="account" class="me-5">Account </label>
-          <div class="input">
+        <div class="form-label-group d-flex mb-3  mt-5  align-items-center justify-content-center fs-5">
+          <label for="account" class="label-name w-25 text-center">Account </label>
+          <div class="w-75">
             <input id="account" v-model="account" name="account" type="account" class="form-control" placeholder="account"
               autocomplete="username" required autofocus />
           </div>
         </div>
 
-        <div class="form-label-group mb-5 mt-4 ms-2 d-flex align-items-center fs-5">
-          <label for="password" class="me-5">Password</label>
-          <div class="input">
-            <input id="password" v-model="password" name="password" type="password" class="form-control"
-              placeholder="Password" autocomplete="current-password" required />
+        <div class="form-label-group mb-5 mt-4 d-flex align-items-center justify-content-center fs-5">
+          <label for="password" class="label-name w-25 text-center">Password</label>
+          <div class="w-75 input d-flex">
+            <input id="password" v-model="password" name="password" :type="isHidden ? 'password' : 'text'"
+              class="form-control" placeholder="Password" autocomplete="current-password" required />
+            <i id="checkEye" :class="[isHidden ? 'bi-eye-slash' : 'bi-eye', 'bi']" @click="isHidden = !isHidden"></i>
           </div>
         </div>
 
@@ -35,20 +36,20 @@
 </template>
 
 
-
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import authorizationAPI from "./../apis/authorization";
-import { Toast } from "./../utils/helpers";
-import { useStore } from "vuex"
+import { Toast, Loading } from "./../utils/helpers";
+import { useAuthUserStore } from "../stores/auth-user";
 
 
 const router = useRouter();
 const account = ref("");
 const password = ref("");
-const store = useStore();
+const authUserStore = useAuthUserStore();
 const nowYear = new Date().getFullYear()
+const isHidden = ref(true)
 let isProcessing = ref(false);
 
 
@@ -82,19 +83,30 @@ const handleSubmit = async () => {
     localStorage.setItem("token", data.token);
 
     //存入user資料
-    store.commit('setCurrentUser', data.user)
+    authUserStore.setCurrentUser(data.user)
 
     //轉址到主頁面
+    await Loading.fire({
+      timer: 1300
+    })
+
     router.push("/mainpage");
+
 
   } catch (err: any) {
 
     const errMsg = err.response.data;
 
+    await Loading.fire({
+      timer: 1300
+    })
+
     Toast.fire({
       icon: 'error',
       title: errMsg.message,
     })
+
+
 
     isProcessing.value = false
 
@@ -103,11 +115,40 @@ const handleSubmit = async () => {
 </script>
 
 <style>
-.card {
-  width: 600px;
-}
-
 .input {
   width: 400px;
+}
+
+@media (max-width: 830px) {
+  .label-name {
+    font-size: 16px;
+  }
+
+  .form-control {
+    height: 35px;
+    margin-left: 7px;
+  }
+}
+
+@media (max-width: 300px) {
+
+  .label-name {
+    font-size: 12px;
+  }
+
+  .form-control {
+    width: 90%;
+    height: 30px;
+    margin-left: 20px;
+  }
+
+  .btn-primary {
+    font-size: 15px;
+  }
+}
+
+#checkEye {
+  margin-top: 2px;
+  margin-left: -30px;
 }
 </style>

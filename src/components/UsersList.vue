@@ -1,6 +1,6 @@
 <template>
   <li class="list-group-item d-flex justify-content-between align-items-center">
-    <div class="row align-items-center">
+    <div class="row align-items-center col-6">
 
       <h3>{{ user!.name }}</h3>
 
@@ -8,24 +8,73 @@
 
     </div>
 
-    <div class="row">
+    <div class="row col-6 col-xl-3 col-lg-4">
       <div v-if="user!.isAdmin" class="col row me-2">
-        <button type="button" class="btn btn-danger me-4 disabled">管理者</button>
+        <button type="button" class="btn btn-danger btn-admin disabled">管理者</button>
       </div>
 
       <div v-else-if="!user!.locked" class="col row me-2">
-        <button type="button" class="btn btn-secondary me-4 disabled">未上鎖</button>
+        <button type="button" class="btn btn-secondary btn-unlock disabled">未上鎖</button>
       </div>
 
       <div v-else class="col row me-4">
-        <button type="button" class="btn btn-success me-4 " @click.stop.prevent="unlockUser({ userId: user!.userId })">解鎖</button>
+        <button type="button" class="btn btn-success btn-lock "
+          @click.stop.prevent="unlockUser({ userId: user!.userId })">解鎖</button>
       </div>
 
-      <RouterLink
-            :to="{ name: 'attendant', params: { id: user!.userId }, query: { month: 1, page: 1 } }" type="button" class="btn btn-primary col me-3">出勤紀錄</RouterLink>
+      <RouterLink :to="{ name: 'attendant', params: { id: user!.userId }, query: { month: '', page: 1 } }" type="button"
+        class="btn btn-primary btn-att col me-3">出勤紀錄</RouterLink>
     </div>
   </li>
 </template>
+
+<style>
+@media (max-width: 480px) {
+
+  .btn-admin {
+    font-size: 14px;
+  }
+
+  .btn-lock {
+    font-size: 14px;
+  }
+
+  .btn-unlock {
+    font-size: 14px;
+  }
+
+  .btn-att {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 450px) {
+  .btn-admin {
+    width: 65px;
+    height: 35px;
+    font-size: 13px;
+  }
+
+  .btn-lock {
+    width: 65px;
+    height: 35px;
+    font-size: 13px;
+  }
+
+  .btn-unlock {
+    width: 65px;
+    height: 35px;
+    font-size: 13px;
+  }
+
+  .btn-att {
+    width: 80px;
+    height: 50px;
+    font-size: 12px;
+  }
+
+}
+</style>
 
 <script setup lang="ts">
 import { computed } from "vue"
@@ -39,7 +88,7 @@ const props = defineProps({
 
 const user = computed(() => props.initialUser)
 
-async function unlockUser ({ userId }: { userId: number }) {
+async function unlockUser({ userId }: { userId: number }) {
   const { data } = await adminAPI.unlockUser({ userId })
 
   if (data.status === 'error') {
@@ -49,7 +98,7 @@ async function unlockUser ({ userId }: { userId: number }) {
     })
     return
   }
-  
+
   user.value!.locked = false
 }
 </script>

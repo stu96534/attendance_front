@@ -1,9 +1,11 @@
 import { computed } from "vue";
 import { createRouter, createWebHistory, useRouter } from "vue-router";
 import NotFound from "../views/NotFound.vue";
-import store from "../store/index"
+import { useAuthUserStore } from "../stores/auth-user";
 
 const route = useRouter()
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +18,7 @@ const router = createRouter({
     {
       path: '/signin',
       name: 'sign-in',
-      component: () => import('../views/SignIn.vue'), 
+      component: () => import('../views/SignIn.vue'),
     },
     {
       path: '/mainpage',
@@ -48,10 +50,11 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+  const authUserStore = useAuthUserStore();
   //從localStorage 取出 token
   const token = localStorage.getItem('token')
 
-  const currentUser = computed(() => store.getters.currentUser);
+  const currentUser = computed(() => authUserStore.currentUser);
 
   //預設尚未驗證
   let isAuthenticated = false
@@ -59,16 +62,16 @@ router.beforeEach(async (to, from, next) => {
 
   //有token才驗證
   if (token) {
-    isAuthenticated = await store.dispatch('fetchCurrentUser')
-    isAdmin = currentUser.value.isAdmin
+    isAuthenticated = await authUserStore.fetchCurrentUser()
+    isAdmin = currentUser.value.isAdmin;
   }
 
-  const pathsWithoutAuthentication = ['sign-in', 'Qrcode-reader']
- 
+  const pathsWithoutAuthentication = ['sign-in']
+
   //token無效且進入需要驗證的頁面，則轉址到登入首頁
   if (!isAuthenticated && !pathsWithoutAuthentication.includes(to.name as string)) {
-      next('/signin')
-      return
+    next('/signin')
+    return
   }
 
   //token有效且進入不需要驗證的頁面，則轉址到打卡首頁

@@ -5,10 +5,7 @@
       <button type="button" class="btn btn-success btn-lg" @click="addUser">
         新增員工
       </button>
-      <!-- 選擇工作地點按鈕 -->
-      <button type="button" class="btn btn-warning btn-lg ms-3" @click="chooseLocation">
-        選擇地點
-      </button>
+     
     </div>
 
     <div class="column mt-4">
@@ -28,7 +25,7 @@
       <!-- 頁碼 -->
       <div class="d-flex justify-content-center mt-3">
         <Pagination v-if="Pages!.length > 1" :current-page="currentPage" :total-page="Pages" :previous-page="prev"
-          :next-page="next" />
+          :next-page="next" :routeName="'admin'"/>
       </div>
     </div>
   </div>
@@ -37,7 +34,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import UsersList from "../components/UsersList.vue";
-import Pagination from "../components/UsersPagination.vue";
+import Pagination from "../components/Pagination.vue";
 import adminAPI from "../apis/admin";
 import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import Swal from "sweetalert2";

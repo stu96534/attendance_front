@@ -4,8 +4,8 @@
       <!-- 回到上一頁 previousPage -->
       <li v-show="previousPage" :class="['page-item', { disabled: currentPage === 1 }]">
         <router-link class="page-link" aria-label="Previous" :to="{
-  name: 'attendant',
-  query: { month: Month, page: previousPage },
+          name: routeName,
+          query: { ...queryElement, page: previousPage },
         }">
           <span aria-hidden="true">&laquo;</span>
         </router-link>
@@ -13,14 +13,15 @@
 
       <!-- 頁碼 -->
       <li v-for="page in totalPage" :key="page" :class="['page-item', { active: currentPage === page }]">
-        <RouterLink :to="{ name: 'attendant', query: { month: Month, page } }" class="page-link">
+        <RouterLink :to="{ name: routeName, query: { ...queryElement, page } }" class="page-link">
           {{ page }}
         </RouterLink>
       </li>
 
       <!-- 前往下一頁 nextPage -->
       <li v-show="nextPage" :class="['page-item', { disabled: currentPage === totalPage.length }]">
-        <router-link class="page-link" :to="{ name: 'attendant', query: { month: Month, page: nextPage } }" aria-label="Next">
+        <router-link class="page-link" :to="{ name: routeName, query: { ...queryElement, page: nextPage } }"
+          aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </router-link>
       </li>
@@ -34,6 +35,8 @@ const props = defineProps({
   totalPage: { Array, default: [1] },
   previousPage: Number,
   nextPage: Number,
-  Month: Number
+  routeName: String,
+  queryElement: Object
 });
+
 </script>

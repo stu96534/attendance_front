@@ -1,9 +1,9 @@
 <template>
-  <div class="container py-5">
-    <div class="card card-body mx-auto d-flex">
+  <div class="container mt-4 col-sm-6">
+    <div class="card card-body mx-auto d-gird w-75">
       <div class="text-center">
         <!-- 相片 -->
-        <img src="https://fakeimg.pl/120x130" class="rounded mt-5" alt="..." />
+        <img src="https://fakeimg.pl/120x130" class="rounded mt-4" alt="..." />
       </div>
 
       <!-- 名字 -->
@@ -12,56 +12,55 @@
       </div>
 
       <!-- 日期 -->
-      <div class="text-center mb-4">
+      <div class="text-center mb-3">
         <h1 class="h3 mb-3 mt-1 font-weight-normal fs-5">{{ nowDay }}</h1>
       </div>
 
       <!-- 時間 -->
       <div class="text-center mb-4">
-        <h1 class="h3 mt-1 font-weight-normal fs-1">{{ nowTime }}</h1>
+        <h1 class="h3 font-weight-normal fs-1">{{ nowTime }}</h1>
       </div>
 
       <!-- 打卡按鈕 -->
-      <div class="d-grid justify-content-center align-self-center">
-        <button
-        id="clock"
-          class="btn btn-success btn-block mb-3 fs-1 disable"
-          type="button"
-          @click.stop.prevent="handleSubmit"
-        >Clock
+      <div class="row justify-content-center">
+        <button id="clock" class="btn btn-success fs-1 disable" type="button" @click.stop.prevent="handleSubmit">Clock
         </button>
       </div>
 
-      <p class="mt-5 mb-3 text-muted text-center">&copy; 2022-{{ nowYear }}</p>
+      <p class="mt-4 mb-2 text-muted text-center">&copy; 2022-{{ nowYear }}</p>
     </div>
   </div>
 </template>
 
 <style>
 #clock {
-  width: 200px;
-  height: 110px;
+  width: 50%;
 }
-.card {
-  width: 600px;
+
+@media (max-width: 830px) {
+  .card-body {
+    width: 100% !important;
+  }
 }
 </style>
 
 <script  setup lang="ts" >
 import { ref, computed } from "vue";
 import attendantAPI from "../apis/attendant";
+import { Toast, Loading, clockView } from "./../utils/helpers";
 import Swal from "sweetalert2";
-import { useStore } from "vuex";
+import { useAuthUserStore } from "../stores/auth-user";
 
-const store = useStore();
+const authUserStore = useAuthUserStore();
 const nowYear = new Date().getFullYear();
-const currentUser = computed(() => store.getters.currentUser);
+const currentUser = computed(() => authUserStore.currentUser);
 const name = ref(currentUser.value.name);
 const image = ref(currentUser.value.image);
 const userId = ref(currentUser.value.id);
 
 const nowTime = ref("");
 const nowDay = ref("");
+
 
 //如果沒有image，用預設圖片
 if (!image.value) {
@@ -110,40 +109,58 @@ nowTimes();
 const handleSubmit = async () => {
   try {
     const date = new Date().valueOf();
-    const { data } = await attendantAPI.addDate({ userId: userId.value, date });
+    const isworking = await attendantAPI.getTodayAtt({ userId: userId.value, date })
+    let response
 
-    if (data.status === "error") {
-      throw new Error(data.message);
+    if (isworking.data.attendant) {
+
+      response = await attendantAPI.clockOut({ userId: userId.value, date });
+    } else {
+
+      response = await attendantAPI.clockIn({ userId: userId.value, date });
     }
 
-    if (data.message === '上班打卡成功') {
-      Swal.fire({
-        title: data.message,
+
+    if (response.data.status === "error") {
+      throw new Error(response.data.message);
+    }
+
+    if (response.data.message === '上班打卡成功') {
+      await Loading.fire({
+        timer: 1000
+      })
+
+      clockView.fire({
+        title: response.data.message,
         text: "祝你有美好的一天",
         icon: "success",
-        showConfirmButton: false,
-        timer: 1300,
-      });
+      })
+
     }
 
-    if (data.message === '下班打卡成功') {
-      Swal.fire({
-        title: data.message,
+    if (response.data.message === '下班打卡成功') {
+      await Loading.fire({
+        timer: 1000
+      })
+
+      clockView.fire({
+        title: response.data.message,
         text: "辛苦了 路上小心~~~",
         icon: "success",
-        showConfirmButton: false,
-        timer: 1300,
-      });
+      })
     }
 
   } catch (error) {
-    Swal.fire({
+
+    await Loading.fire({
+      timer: 1000
+    })
+
+    clockView.fire({
       title: "Error",
       text: "打卡失敗",
       icon: "error",
-      showConfirmButton: false,
-      timer: 1300
-    });
+    })
   }
 };
 </script>

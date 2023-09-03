@@ -1,9 +1,11 @@
 import axios from "axios";
 import Swal from "sweetalert2";
+import { ref, computed } from "vue";
 
 const baseURL = "http://localhost:3000/api";
 // "https://stormy-sierra-07744.herokuapp.com/api"
 //"http://localhost:3000/api"
+
 
 
 const axiosInstance = axios.create({
@@ -14,7 +16,7 @@ axiosInstance.interceptors.request.use(
   config => {
     const token = localStorage.getItem('token')
 
-    if(token) {
+    if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
     return config
@@ -38,21 +40,20 @@ export const Toast = Swal.mixin({
   timer: 3000,
 });
 
-//計算兩點經緯度的距離
-export const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-    Math.cos(lat2 * (Math.PI / 180)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c;
-  return d * 1000;
-}
+//loeding 視窗
+export const Loading = Swal.mixin({
+  title: 'Waiting...',
+  showConfirmButton: false,
+  didOpen: () => {
+    Swal.showLoading(Swal.getDenyButton())
+  }
+})
+
+//打卡結果 視窗
+export const clockView = Swal.mixin({
+  showConfirmButton: false,
+  timer: 1300,
+})
 
 //改變日期格式
 export const changeDate = (date: number) => {
@@ -79,3 +80,4 @@ export const changeDate = (date: number) => {
 
   return nowDay
 }
+

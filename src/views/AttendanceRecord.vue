@@ -1,110 +1,67 @@
 <template>
-  <div class="container py-4 mt-3">
+  <div class="container mt-5">
 
     <!-- 月份 -->
-    <div class="mb-5 me-5 d-flex flex-row-reverse bd-highlight">
-      <select
-        class="btn btn-secondary"
-        role="button"
-        id="dropdownMenuLink"
-        @change="monthRouter($event)"
-      >
+    <div class="mb-3 me-5 d-flex flex-row-reverse bd-highlight">
+      <select class="btn btn-secondary" role="button" id="dropdownMenuLink" @change="monthRouter($event)">
+        <option value="">
+          全部
+        </option>
         <option v-for="month in allMonth" :key="month" :value="month">
           {{ month }} 月
         </option>
       </select>
     </div>
 
-    <!-- List -->
-    <ul class="list-group list-group-horizontal">
-      <li id="date" class="list-group-item border-dark">日期</li>
-      <li id="checkIn" class="list-group-item border-dark">上班時間</li>
-      <li id="checkOut" class="list-group-item border-dark">下班時間</li>
-      <li id="absenseRC" class="list-group-item border-dark absense">缺勤紀錄</li>
-      <li id="descriptions" class="list-group-item border-dark">備註</li>
-    </ul>
+    <table class="table text-center table-striped">
+      <thead>
+        <tr>
+          <th scope="col">日期</th>
+          <th scope="col">上班時間</th>
+          <th scope="col">下班時間</th>
+          <th scope="col" class="state">出勤狀況</th>
+          <th scope="col">備註</th>
+        </tr>
+      </thead>
+      <tbody>
 
-    <ul
-      class="list-group list-group-horizontal"
-      v-for="attendant in attendants"
-      :key="attendant['id']"
-    >
-    <!-- 日期 -->
-      <li
-        id="date"
-        class="list-group-item text-danger"
-        v-if="attendant['isHoliday']"
-      >
-        {{ attendant["date"] }} ({{ attendant["week"] }})
-      </li>
-      <li id="date" class="list-group-item" v-else>{{ attendant["date"] }} ({{ attendant["week"] }})</li>
+        <tr v-for="attendant in attendants" :key="attendant['id']">
+          <!-- 日期 -->
+          <th scope="row" class="text-danger" v-if="attendant['isHoliday']">{{ attendant["date"] }} ({{ attendant["week"]
+          }})</th>
+          <th scope="row" v-else>{{ attendant["date"] }} ({{ attendant["week"] }})</th>
 
-      <!-- 上班時間 -->
-      <li
-        id="checkIn"
-        class="list-group-item text-danger"
-        v-if="attendant['isHoliday']"
-      >
-        {{ attendant["checkIn"] }}
-      </li>
-      <li id="checkIn" class="list-group-item" v-else>
-        {{ attendant["checkIn"] }}
-      </li>
+          <!-- 上班時間 -->
+          <td class="text-danger" v-if="attendant['isHoliday']">{{ attendant["checkIn"] }}</td>
 
-      <!-- 下班時間 -->
-      <li
-        id="checkOut"
-        class="list-group-item text-danger"
-        v-if="attendant['isHoliday']"
-      >
-        {{ attendant["checkOut"] }}
-      </li>
-      <li id="checkOut" class="list-group-item" v-else>
-        {{ attendant["checkOut"] }}
-      </li>
+          <td v-else>{{ attendant["checkIn"] }}</td>
 
-      <!-- 缺勤紀錄 -->
-      <button
-        id="holiday"
-        class="list-group-item text-danger disabled"
-        v-if="attendant['isHoliday'] && attendant['isAttendant']"
-      > 加班
-    </button>
-      <li id="holiday" class="list-group-item text-danger"
-        v-else-if="attendant['isHoliday']"></li>
-      <button
-        :id="attendant['id']"
-        class="list-group-item btn-link text-warning absense"
-        v-else-if="attendant['isAbsense']"
-        @click="changeAtt"
-      >
-        缺勤
-      </button>
-      <button id="attendant" class="list-group-item text-success disabled" v-else-if="attendant['isAttendant']">
-        到勤
-      </button>
-      <button id="noWork" class="list-group-item text-secondary disabled" v-else>
-        尚未上班
-      </button>
+          <!-- 下班時間 -->
+          <td class="text-danger" v-if="attendant['isHoliday']">{{ attendant["checkOut"] }}</td>
 
-      <!-- 備註 -->
-      <li
-        id="descriptions"
-        class="list-group-item text-danger"
-        v-if="attendant['isHoliday']"
-      >
-        {{ attendant["description"] }}
-      </li>
-      <li id="descriptions" class="list-group-item" v-else>
-        {{ attendant["description"] }}
-      </li>
-    </ul>
+          <td v-else>{{ attendant["checkOut"] }}</td>
+
+          <!-- 出勤紀錄 -->
+          <td class="text-danger" v-if="attendant['isHoliday']">加班</td>
+
+          <td class="text-warning" v-else-if="attendant['isAbsense']">缺勤</td>
+
+          <td class="text-success" v-else>到勤</td>
+
+          <!-- 備註 -->
+          <td><button :id="attendant['id']" class="btn btn-sm btn-primary" v-if="attendant['isAbsense']"
+              @click="changeAtt">改為到勤</button></td>
+        </tr>
+
+      </tbody>
+    </table>
 
     <!-- 頁碼 -->
     <div class="d-flex justify-content-center mt-3">
       <Pagination v-if="Pages!.length > 1" :current-page="currentPage" :total-page="Pages" :previous-page="prev"
-        :next-page="next" :Month="Month" />
+        :next-page="next" :routeName="'attendant'" :queryElement="{ month: Month }" />
     </div>
+
   </div>
 </template>
 
@@ -113,7 +70,7 @@ import { ref } from "vue";
 import { onBeforeRouteUpdate, useRouter, useRoute } from "vue-router";
 import Swal from "sweetalert2";
 import adminAPI from "../apis/admin";
-import Pagination from "../components/AttPagination.vue";
+import Pagination from "../components/Pagination.vue";
 import { changeDate, Toast } from "../utils/helpers";
 
 const router = useRouter();
@@ -170,7 +127,7 @@ async function fetchAttendant({ month, page }: { month: any, page: any }) {
       }
 
     });
-   
+
   } catch (error) {
     console.log("error", error);
     Toast.fire({
@@ -189,7 +146,6 @@ onBeforeRouteUpdate((to, from) => {
 });
 
 
-
 const changeAtt = async (event: any) => {
   const id = event.target.id
 
@@ -198,50 +154,30 @@ const changeAtt = async (event: any) => {
     showDenyButton: true,
     confirmButtonText: '確定',
     denyButtonText: `取消`,
-  }).then( async (result) => {
+  }).then(async (result) => {
+
     if (result.isConfirmed) {
       await adminAPI.changeAttendant({ id })
       router.go(0)
-    } else if (result.isDenied) {
-      Swal.fire('Changes are not saved', '', 'info')
     }
   })
 }
 </script>
 
 <style>
-#date {
-  width: 150px;
-}
-
-#checkIn {
-  width: 350px;
-}
-
-#checkOut {
-  width: 350px;
-}
-
-#holiday {
-  width: 200px;
-}
-
-.absense {
-  width: 200px;
-}
-
-#attendant{
-    width: 200px;
-  }
-
-#noWork {
-      width: 200px;
-    }
-#descriptions {
-  width: 200px;
-}
-
 #month {
   width: 50px;
+}
+
+@media (max-width: 768px) {
+  .state {
+    width: 100px
+  }
+}
+
+@media (max-width: 488px) {
+  table {
+    font-size: 13px;
+  }
 }
 </style>
