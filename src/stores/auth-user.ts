@@ -4,7 +4,7 @@ import usersAPI from "../apis/users"
 
 
 export const useAuthUserStore = defineStore("auth/user", () => {
-  const currentUser = ref({});
+  const currentUser = ref({} as any);
   const isAuthenticated = ref(false);
 
   function setCurrentUser(User: object) {
