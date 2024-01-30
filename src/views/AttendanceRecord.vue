@@ -1,9 +1,9 @@
 <template>
   <div class="container mt-5">
 
-    <!-- 月份 -->
-    <div class="mb-3 me-5 d-flex flex-row-reverse bd-highlight">
-      <select class="btn btn-secondary" role="button" id="dropdownMenuLink" @change="monthRouter($event)">
+    <!-- 年分 月份 -->
+    <div class="mb-3 me-5 d-flex flex-row-reverse bd-highlight" @change="dateRouter($event)">
+      <select class="btn btn-secondary" role="button" id="dropdownMenuLink" >
         <option value="">
           全部
         </option>
@@ -11,6 +11,15 @@
           {{ month }} 月
         </option>
       </select>
+
+      <select class="btn btn-secondary me-3" role="button" id="dropdownMenuLink">
+        <option value="">
+            年份
+          </option>
+            <option v-for="year in allYear" :key="year" :value="year">
+              {{ year }} 
+            </option>
+          </select>
     </div>
 
     <table class="table text-center table-striped">
@@ -59,7 +68,7 @@
     <!-- 頁碼 -->
     <div class="d-flex justify-content-center mt-3">
       <Pagination v-if="Pages!.length > 1" :current-page="currentPage" :total-page="Pages" :previous-page="prev"
-        :next-page="next" :routeName="'attendant'" :queryElement="{ month: Month }" />
+        :next-page="next" :routeName="'attendant'" :queryElement="{ month: Month, year: Year }" />
     </div>
 
   </div>
@@ -76,29 +85,42 @@ import { changeDate, Toast } from "../utils/helpers";
 const router = useRouter();
 const route = useRoute();
 
+const allYear = [2024, 2023]
 const allMonth = Array.from({ length: 12 }).map((v, i) => i + 1);
 
-const monthRouter = (event: any) => {
+const monthTemp = ref('');
+const yearTemp = ref('');
+
+const dateRouter = (event: any) => {
+
+  if (event.target.value > 12) {
+    yearTemp.value = event.target.value
+  } else {
+    monthTemp.value = event.target.value
+  }
+
   router.push({
     name: "attendant",
-    query: { month: event.target.value, page: 1 },
+    query: { year: yearTemp.value, month: monthTemp.value, page: 1 },
   });
 };
 
 
 const attendants = ref([]);
 const Month = ref();
+const Year = ref();
 const Pages = ref([]);
 const currentPage = ref();
 const prev = ref();
 const next = ref();
 
-async function fetchAttendant({ month, page }: { month: any, page: any }) {
+async function fetchAttendant({ month, page, year }: { month: any, page: any, year: any }) {
   try {
     const response = await adminAPI.getUserAttendant({
       month,
       userId: Number(route.params.id),
-      page
+      page,
+      year
     });
 
     //頁碼
@@ -108,6 +130,9 @@ async function fetchAttendant({ month, page }: { month: any, page: any }) {
     currentPage.value = pagination.currentPage;
     prev.value = pagination.prev;
     next.value = pagination.next;
+
+    //年份
+    Year.value = response.data.year
 
     //月份
     Month.value = response.data.month
@@ -137,12 +162,12 @@ async function fetchAttendant({ month, page }: { month: any, page: any }) {
   }
 }
 
-const { month, page } = route.query;
-fetchAttendant({ month: month, page: page });
+const { month, page, year } = route.query;
+fetchAttendant({ month: month, page: page, year: year  });
 
 onBeforeRouteUpdate((to, from) => {
-  const { month, page } = to.query;
-  fetchAttendant({ month: month, page: page });
+  const { month, page, year } = to.query;
+  fetchAttendant({ month: month, page: page, year: year });
 });
 
 

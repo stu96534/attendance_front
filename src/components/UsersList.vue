@@ -22,7 +22,7 @@
           @click.stop.prevent="unlockUser({ userId: user!.userId })">解鎖</button>
       </div>
 
-      <RouterLink :to="{ name: 'attendant', params: { id: user!.userId }, query: { month: '', page: 1 } }" type="button"
+      <RouterLink :to="{ name: 'attendant', params: { id: user!.userId }, query: { year: '',month: '', page: 1 } }" type="button"
         class="btn btn-primary btn-att col me-3">出勤紀錄</RouterLink>
     </div>
   </li>
